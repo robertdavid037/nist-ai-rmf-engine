@@ -6,15 +6,18 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from data.questions import QUESTIONS
 from scoring import save_assessment
+from sidebar import render_sidebar
 
 st.set_page_config(
     page_title="New Assessment — NIST AI RMF",
     page_icon="📋",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_allow_html=True)
+
+render_sidebar()
 
 if st.button("← Back to Dashboard"):
     st.switch_page("app.py")

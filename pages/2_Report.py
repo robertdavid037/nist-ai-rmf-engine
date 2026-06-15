@@ -7,15 +7,18 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from database.db import get_connection
 from data.questions import QUESTIONS
 from pdf_export import generate_pdf
+from sidebar import render_sidebar
 
 st.set_page_config(
     page_title="Compliance Report — NIST AI RMF",
     page_icon="📄",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_allow_html=True)
+
+render_sidebar()
 
 TIER_BG = {
     "Minimal":      "#27ae60",
@@ -68,8 +71,13 @@ emoji = TIER_EMOJI.get(tier, "")
 # ── Nav bar: back + PDF download ──────────────────────────────────────────────
 col_back, col_pdf = st.columns([5, 1])
 with col_back:
-    if st.button("← Back to Dashboard"):
-        st.switch_page("app.py")
+    source = st.session_state.get("report_source", "dashboard")
+    if source == "insights":
+        if st.button("← Back to Insights"):
+            st.switch_page("pages/3_Insights.py")
+    else:
+        if st.button("← Back to Dashboard"):
+            st.switch_page("app.py")
 with col_pdf:
     pdf_bytes = bytes(generate_pdf(assessment, tool, responses, questions_by_id))
     file_name = f"NIST_RMF_{tool['name'].replace(' ', '_')}_{assessment['assessed_at'][:10]}.pdf"

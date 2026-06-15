@@ -5,12 +5,13 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 from database.db import init_db, get_connection
+from sidebar import render_sidebar
 
 st.set_page_config(
     page_title="AI Security Posture Dashboard",
     page_icon="🛡️",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 st.markdown("""
@@ -29,6 +30,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 init_db()
+render_sidebar()
 
 TIER_BG = {
     "Minimal": "#27ae60",
