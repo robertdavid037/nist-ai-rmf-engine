@@ -14,9 +14,13 @@ from database.db import get_connection, init_db
 from scoring import calculate_scores, QUESTIONS_BY_ID
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Each tool has a list of assessments so we can demo trend lines.
-# GitHub Copilot has 4 assessments showing a rising compliance trend.
-# Answers: 18 entries per assessment, "Yes" = compliant, "No" = gap.
+# Each tool has 4 assessments spread across ~6 months so the trend chart
+# tells a real story. Answers: 18 entries per assessment (Yes / No).
+#
+# Risk scores per question (default_risk):
+#   Q1:12  Q2:9   Q3:9   Q4:6   Q5:20  Q6:15  Q7:12  Q8:16  Q9:20
+#   Q10:12 Q11:9  Q12:9  Q13:6  Q14:6  Q15:20 Q16:12 Q17:15 Q18:6
+#   MAX_POSSIBLE = 214
 # ─────────────────────────────────────────────────────────────────────────────
 
 DEMO_TOOLS = [
@@ -26,15 +30,51 @@ DEMO_TOOLS = [
         "category": "Productivity",
         "assessments": [
             {
-                "assessor": "Demo Assessment",
-                "days_ago": 15,
-                # Q14 (bias eval, 6) and Q18 (periodic review, 6) are gaps → 94% Minimal
+                # 180d ago — 71% Limited
+                # No: Q3(9) Q4(6) Q8(16) Q9(20) Q14(6) Q18(6) = 63 risk
+                "assessor": "Demo Assessment", "days_ago": 180,
                 "answers": [
-                    "Yes", "Yes", "Yes", "Yes",   # Q1–Q4
-                    "Yes", "Yes", "Yes", "Yes",   # Q5–Q8
-                    "Yes", "Yes", "Yes", "Yes",   # Q9–Q12
-                    "Yes", "No",  "Yes", "Yes",   # Q13–Q16
-                    "Yes", "No",                  # Q17–Q18
+                    "Yes", "Yes", "No",  "No",   # Q1–Q4
+                    "Yes", "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "Yes", "Yes",  # Q13–Q16
+                    "Yes", "No",                 # Q17–Q18
+                ],
+            },
+            {
+                # 120d ago — 80% Minimal
+                # No: Q8(16) Q9(20) Q14(6) = 42 risk
+                "assessor": "Demo Assessment", "days_ago": 120,
+                "answers": [
+                    "Yes", "Yes", "Yes", "Yes",  # Q1–Q4
+                    "Yes", "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "Yes", "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
+                ],
+            },
+            {
+                # 60d ago — 88% Minimal
+                # No: Q4(6) Q9(20) = 26 risk
+                "assessor": "Demo Assessment", "days_ago": 60,
+                "answers": [
+                    "Yes", "Yes", "Yes", "No",   # Q1–Q4
+                    "Yes", "Yes", "Yes", "Yes",  # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "Yes", "Yes", "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
+                ],
+            },
+            {
+                # 15d ago — 94% Minimal
+                # No: Q14(6) Q18(6) = 12 risk
+                "assessor": "Demo Assessment", "days_ago": 15,
+                "answers": [
+                    "Yes", "Yes", "Yes", "Yes",  # Q1–Q4
+                    "Yes", "Yes", "Yes", "Yes",  # Q5–Q8
+                    "Yes", "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "Yes", "Yes",  # Q13–Q16
+                    "Yes", "No",                 # Q17–Q18
                 ],
             },
         ],
@@ -45,15 +85,51 @@ DEMO_TOOLS = [
         "category": "Productivity",
         "assessments": [
             {
-                "assessor": "Demo Assessment",
-                "days_ago": 30,
-                # Q1(12), Q2(9), Q5(20), Q8(16), Q9(20), Q14(6), Q15(20) are gaps → 52% High
+                # 180d ago — 32% Unacceptable
+                # No: Q1(12) Q2(9) Q3(9) Q4(6) Q5(20) Q6(15) Q8(16) Q9(20) Q10(12) Q14(6) Q15(20) = 145 risk
+                "assessor": "Demo Assessment", "days_ago": 180,
                 "answers": [
-                    "No",  "No",  "Yes", "Yes",   # Q1–Q4
-                    "No",  "Yes", "Yes", "No",    # Q5–Q8
-                    "No",  "Yes", "Yes", "Yes",   # Q9–Q12
-                    "Yes", "No",  "No",  "Yes",   # Q13–Q16
-                    "Yes", "Yes",                 # Q17–Q18
+                    "No",  "No",  "No",  "No",   # Q1–Q4
+                    "No",  "No",  "Yes", "No",   # Q5–Q8
+                    "No",  "No",  "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "No",  "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
+                ],
+            },
+            {
+                # 120d ago — 41% High
+                # No: Q1(12) Q2(9) Q3(9) Q5(20) Q6(15) Q8(16) Q9(20) Q14(6) Q15(20) = 127 risk
+                "assessor": "Demo Assessment", "days_ago": 120,
+                "answers": [
+                    "No",  "No",  "No",  "Yes",  # Q1–Q4
+                    "No",  "No",  "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "No",  "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
+                ],
+            },
+            {
+                # 60d ago — 48% High
+                # No: Q1(12) Q2(9) Q3(9) Q5(20) Q8(16) Q9(20) Q14(6) Q15(20) = 112 risk
+                "assessor": "Demo Assessment", "days_ago": 60,
+                "answers": [
+                    "No",  "No",  "No",  "Yes",  # Q1–Q4
+                    "No",  "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "No",  "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
+                ],
+            },
+            {
+                # 30d ago — 52% High
+                # No: Q1(12) Q2(9) Q5(20) Q8(16) Q9(20) Q14(6) Q15(20) = 103 risk
+                "assessor": "Demo Assessment", "days_ago": 30,
+                "answers": [
+                    "No",  "No",  "Yes", "Yes",  # Q1–Q4
+                    "No",  "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "No",  "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
                 ],
             },
         ],
@@ -64,15 +140,51 @@ DEMO_TOOLS = [
         "category": "CRM",
         "assessments": [
             {
-                "assessor": "Demo Assessment",
-                "days_ago": 7,
-                # Q3(9), Q5(20), Q8(16), Q14(6), Q18(6) are gaps → 73% Limited
+                # 150d ago — 83% Minimal
+                # No: Q8(16) Q9(20) = 36 risk
+                "assessor": "Demo Assessment", "days_ago": 150,
                 "answers": [
-                    "Yes", "Yes", "No",  "Yes",   # Q1–Q4
-                    "No",  "Yes", "Yes", "No",    # Q5–Q8
-                    "Yes", "Yes", "Yes", "Yes",   # Q9–Q12
-                    "Yes", "No",  "Yes", "Yes",   # Q13–Q16
-                    "Yes", "No",                  # Q17–Q18
+                    "Yes", "Yes", "Yes", "Yes",  # Q1–Q4
+                    "Yes", "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "Yes", "Yes", "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
+                ],
+            },
+            {
+                # 90d ago — 76% Limited
+                # No: Q3(9) Q5(20) Q8(16) Q14(6) = 51 risk
+                "assessor": "Demo Assessment", "days_ago": 90,
+                "answers": [
+                    "Yes", "Yes", "No",  "Yes",  # Q1–Q4
+                    "No",  "Yes", "Yes", "No",   # Q5–Q8
+                    "Yes", "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "Yes", "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
+                ],
+            },
+            {
+                # 42d ago — 67% Limited (dip — new risks discovered)
+                # No: Q3(9) Q5(20) Q8(16) Q9(20) Q14(6) = 71 risk
+                "assessor": "Demo Assessment", "days_ago": 42,
+                "answers": [
+                    "Yes", "Yes", "No",  "Yes",  # Q1–Q4
+                    "No",  "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "Yes", "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
+                ],
+            },
+            {
+                # 7d ago — 73% Limited (recovering)
+                # No: Q3(9) Q5(20) Q8(16) Q14(6) Q18(6) = 57 risk
+                "assessor": "Demo Assessment", "days_ago": 7,
+                "answers": [
+                    "Yes", "Yes", "No",  "Yes",  # Q1–Q4
+                    "No",  "Yes", "Yes", "No",   # Q5–Q8
+                    "Yes", "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "Yes", "Yes",  # Q13–Q16
+                    "Yes", "No",                 # Q17–Q18
                 ],
             },
         ],
@@ -83,51 +195,51 @@ DEMO_TOOLS = [
         "category": "Code",
         "assessments": [
             {
-                "assessor": "Demo Assessment",
-                "days_ago": 120,
-                # Q1(12),Q2(9),Q3(9),Q5(20),Q6(15),Q8(16),Q9(20),Q14(6),Q15(20) → 41% High
+                # 120d ago — 41% High
+                # No: Q1(12) Q2(9) Q3(9) Q5(20) Q6(15) Q8(16) Q9(20) Q14(6) Q15(20) = 127 risk
+                "assessor": "Demo Assessment", "days_ago": 120,
                 "answers": [
-                    "No",  "No",  "No",  "Yes",   # Q1–Q4
-                    "No",  "No",  "Yes", "No",    # Q5–Q8
-                    "No",  "Yes", "Yes", "Yes",   # Q9–Q12
-                    "Yes", "No",  "No",  "Yes",   # Q13–Q16
-                    "Yes", "Yes",                 # Q17–Q18
+                    "No",  "No",  "No",  "Yes",  # Q1–Q4
+                    "No",  "No",  "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "No",  "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
                 ],
             },
             {
-                "assessor": "Demo Assessment",
-                "days_ago": 75,
-                # Q1(12),Q2(9),Q3(9),Q5(20),Q8(16),Q9(20),Q14(6) → 57% High
+                # 75d ago — 57% High
+                # No: Q1(12) Q2(9) Q3(9) Q5(20) Q8(16) Q9(20) Q14(6) = 92 risk
+                "assessor": "Demo Assessment", "days_ago": 75,
                 "answers": [
-                    "No",  "No",  "No",  "Yes",   # Q1–Q4
-                    "No",  "Yes", "Yes", "No",    # Q5–Q8
-                    "No",  "Yes", "Yes", "Yes",   # Q9–Q12
-                    "Yes", "No",  "Yes", "Yes",   # Q13–Q16
-                    "Yes", "Yes",                 # Q17–Q18
+                    "No",  "No",  "No",  "Yes",  # Q1–Q4
+                    "No",  "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "Yes", "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
                 ],
             },
             {
-                "assessor": "Demo Assessment",
-                "days_ago": 42,
-                # Q5(20),Q8(16),Q9(20),Q14(6),Q18(6) → 68% Limited
+                # 42d ago — 68% Limited
+                # No: Q5(20) Q8(16) Q9(20) Q14(6) Q18(6) = 68 risk
+                "assessor": "Demo Assessment", "days_ago": 42,
                 "answers": [
-                    "Yes", "Yes", "Yes", "Yes",   # Q1–Q4
-                    "No",  "Yes", "Yes", "No",    # Q5–Q8
-                    "No",  "Yes", "Yes", "Yes",   # Q9–Q12
-                    "Yes", "No",  "Yes", "Yes",   # Q13–Q16
-                    "Yes", "No",                  # Q17–Q18
+                    "Yes", "Yes", "Yes", "Yes",  # Q1–Q4
+                    "No",  "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "No",  "Yes", "Yes",  # Q13–Q16
+                    "Yes", "No",                 # Q17–Q18
                 ],
             },
             {
-                "assessor": "Demo Assessment",
-                "days_ago": 14,
-                # Q3(9),Q8(16),Q9(20) → 79% Limited
+                # 14d ago — 79% Limited
+                # No: Q3(9) Q8(16) Q9(20) = 45 risk
+                "assessor": "Demo Assessment", "days_ago": 14,
                 "answers": [
-                    "Yes", "Yes", "No",  "Yes",   # Q1–Q4
-                    "Yes", "Yes", "Yes", "No",    # Q5–Q8
-                    "No",  "Yes", "Yes", "Yes",   # Q9–Q12
-                    "Yes", "Yes", "Yes", "Yes",   # Q13–Q16
-                    "Yes", "Yes",                 # Q17–Q18
+                    "Yes", "Yes", "No",  "Yes",  # Q1–Q4
+                    "Yes", "Yes", "Yes", "No",   # Q5–Q8
+                    "No",  "Yes", "Yes", "Yes",  # Q9–Q12
+                    "Yes", "Yes", "Yes", "Yes",  # Q13–Q16
+                    "Yes", "Yes",                # Q17–Q18
                 ],
             },
         ],
