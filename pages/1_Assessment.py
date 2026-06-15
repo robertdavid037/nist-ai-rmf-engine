@@ -108,32 +108,13 @@ for q in QUESTIONS:
             label_visibility="collapsed",
         )
 
-        likelihood = 0
-        impact = 0
-
         if answer == "No":
             st.info(f"**Why this matters:** {q['why']}")
-            col_l, col_i, col_score = st.columns([3, 3, 1])
-            with col_l:
-                likelihood = st.slider(
-                    "Likelihood (1 = Rare · 5 = Certain)",
-                    min_value=1, max_value=5, value=3,
-                    key=f"q{q_id}_likelihood",
-                )
-            with col_i:
-                impact = st.slider(
-                    "Impact (1 = Low · 5 = Critical)",
-                    min_value=1, max_value=5, value=3,
-                    key=f"q{q_id}_impact",
-                )
-            with col_score:
-                st.metric("Risk Score", likelihood * impact)
+            st.metric("Risk Score", q["default_risk"])
 
     responses.append({
         "question_id": q_id,
         "answer": answer,
-        "likelihood": likelihood,
-        "impact": impact,
     })
 
 # ── Submit bar ────────────────────────────────────────────────────────────────

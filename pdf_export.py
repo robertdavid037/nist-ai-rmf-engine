@@ -144,7 +144,7 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
             refs = f"   {nist_ref}"
             if owasp_ref:
                 refs += f"  /  {owasp_ref}"
-            refs += f"  /  L={r['likelihood']} x I={r['impact']} = {r['risk_score']}"
+            refs += f"  /  Risk Score: {r['risk_score']}"
             pdf.set_x(LM)
             pdf.set_font("Helvetica", "", 8)
             pdf.set_text_color(60, 80, 160)

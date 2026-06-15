@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from database.db import get_connection
+from data.questions import QUESTIONS
 
 FUNCTION_QUESTIONS = {
     "GOVERN": [1, 2, 3, 4],
@@ -7,31 +8,32 @@ FUNCTION_QUESTIONS = {
     "MEASURE": [9, 10, 11, 12, 13, 14],
     "MANAGE": [15, 16, 17, 18],
 }
-MAX_PER_QUESTION = 25  # 5 × 5
+
+QUESTIONS_BY_ID = {q["id"]: q for q in QUESTIONS}
+MAX_POSSIBLE = sum(q["default_risk"] for q in QUESTIONS)
 
 
 def calculate_scores(responses):
     """
-    responses: list of dicts with keys: question_id, answer, likelihood, impact
+    responses: list of dicts with keys: question_id, answer
     Returns a dict of all calculated scores.
     """
     risk_by_q = {}
     for r in responses:
         q_id = r["question_id"]
-        risk_by_q[q_id] = 0 if r["answer"] == "Yes" else r["likelihood"] * r["impact"]
+        risk_by_q[q_id] = 0 if r["answer"] == "Yes" else QUESTIONS_BY_ID[q_id]["default_risk"]
 
     total_risk = sum(risk_by_q.values())
-    max_total = len(responses) * MAX_PER_QUESTION
-    compliance_pct = round((1 - total_risk / max_total) * 100)
+    compliance_pct = round((1 - total_risk / MAX_POSSIBLE) * 100)
 
     def fn_pct(q_ids):
         fn_risk = sum(risk_by_q.get(q, 0) for q in q_ids)
-        fn_max = len(q_ids) * MAX_PER_QUESTION
+        fn_max = sum(QUESTIONS_BY_ID[q]["default_risk"] for q in q_ids)
         return round((1 - fn_risk / fn_max) * 100)
 
     return {
         "total_risk_score": total_risk,
-        "max_possible_score": max_total,
+        "max_possible_score": MAX_POSSIBLE,
         "compliance_pct": compliance_pct,
         "risk_tier": pct_to_tier(compliance_pct),
         "govern_pct": fn_pct(FUNCTION_QUESTIONS["GOVERN"]),
@@ -95,12 +97,12 @@ def save_assessment(tool_name, vendor, category, assessor_name, responses):
     assessment_id = cur.lastrowid
 
     for r in responses:
-        risk_score = 0 if r["answer"] == "Yes" else r["likelihood"] * r["impact"]
+        risk_score = 0 if r["answer"] == "Yes" else QUESTIONS_BY_ID[r["question_id"]]["default_risk"]
         conn.execute(
             """INSERT INTO responses
                (assessment_id, question_id, answer, likelihood, impact, risk_score)
                VALUES (?, ?, ?, ?, ?, ?)""",
-            (assessment_id, r["question_id"], r["answer"], r["likelihood"], r["impact"], risk_score),
+            (assessment_id, r["question_id"], r["answer"], 0, 0, risk_score),
         )
 
     conn.commit()

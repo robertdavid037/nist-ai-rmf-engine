@@ -159,7 +159,7 @@ else:
             refs = q["nist_ref"]
             if q["owasp_ref"]:
                 refs += f" · {q['owasp_ref']}"
-            st.caption(f"References: {refs}  ·  Likelihood {r['likelihood']} × Impact {r['impact']} = {risk}")
+            st.caption(f"References: {refs}  ·  Risk Score: {risk}")
 
 # ── Compliant controls (collapsible) ─────────────────────────────────────────
 yes_responses = [r for r in responses if r["answer"] == "Yes"]
