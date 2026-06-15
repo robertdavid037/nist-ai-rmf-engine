@@ -1,0 +1,165 @@
+QUESTIONS = [
+    # ── GOVERN ──────────────────────────────────────────────────────────────
+    {
+        "id": 1,
+        "function": "GOVERN",
+        "nist_ref": "GOVERN 1.1",
+        "owasp_ref": None,
+        "text": "Does your organization have a written policy defining acceptable use of this AI tool?",
+        "why": "Without a written policy, employees have no clear boundaries — increasing the chance of misuse or data exposure.",
+    },
+    {
+        "id": 2,
+        "function": "GOVERN",
+        "nist_ref": "GOVERN 2.1",
+        "owasp_ref": None,
+        "text": "Is there a designated person responsible for overseeing AI usage and compliance?",
+        "why": "AI governance without an owner means no one is accountable when something goes wrong.",
+    },
+    {
+        "id": 3,
+        "function": "GOVERN",
+        "nist_ref": "GOVERN 2.2",
+        "owasp_ref": None,
+        "text": "Have employees using this AI tool received training on data handling and appropriate use?",
+        "why": "Untrained employees are the most common source of accidental data leaks through AI tools.",
+    },
+    {
+        "id": 4,
+        "function": "GOVERN",
+        "nist_ref": "GOVERN 1.6",
+        "owasp_ref": None,
+        "text": "Does your organization maintain an inventory of all AI tools currently in use?",
+        "why": "You can't manage risk for tools you don't know exist. Shadow AI is a real threat.",
+    },
+
+    # ── MAP ─────────────────────────────────────────────────────────────────
+    {
+        "id": 5,
+        "function": "MAP",
+        "nist_ref": "MAP 1.1",
+        "owasp_ref": "LLM02 – Sensitive Information Disclosure",
+        "text": "Are data protection measures in place for any personal customer data this AI accesses?",
+        "why": "Personal data processed by AI without controls creates GDPR/PIPEDA/CCPA liability.",
+    },
+    {
+        "id": 6,
+        "function": "MAP",
+        "nist_ref": "MAP 1.1",
+        "owasp_ref": "LLM02 – Sensitive Information Disclosure",
+        "text": "Are access restrictions in place limiting what confidential business data this AI can reach?",
+        "why": "Unrestricted AI access to financials, contracts, or IP is a major data leakage risk.",
+    },
+    {
+        "id": 7,
+        "function": "MAP",
+        "nist_ref": "MAP 4.1 / GOVERN 6.1",
+        "owasp_ref": "LLM03 – Supply Chain",
+        "text": "Have all third-party API connections used by this AI tool been reviewed and approved for security compliance?",
+        "why": "Third-party APIs can exfiltrate your data or introduce compromised model behavior.",
+    },
+    {
+        "id": 8,
+        "function": "MAP",
+        "nist_ref": "MAP 2.1",
+        "owasp_ref": "LLM01 – Prompt Injection",
+        "text": "Are user inputs filtered or validated before being sent to this AI?",
+        "why": "Unfiltered inputs are the primary attack vector for prompt injection — the #1 LLM vulnerability.",
+    },
+
+    # ── MEASURE ─────────────────────────────────────────────────────────────
+    {
+        "id": 9,
+        "function": "MEASURE",
+        "nist_ref": "MEASURE 2.7",
+        "owasp_ref": "LLM01 – Prompt Injection",
+        "text": "Are measures in place to detect and prevent prompt manipulation of this AI?",
+        "why": "Without prompt injection defenses, attackers can override the AI's instructions entirely.",
+    },
+    {
+        "id": 10,
+        "function": "MEASURE",
+        "nist_ref": "MEASURE 2.10",
+        "owasp_ref": "LLM02 – Sensitive Information Disclosure",
+        "text": "Are output controls in place to prevent sensitive data from appearing in AI responses?",
+        "why": "AI models can inadvertently reproduce training data or context window contents in responses.",
+    },
+    {
+        "id": 11,
+        "function": "MEASURE",
+        "nist_ref": "MEASURE 2.6",
+        "owasp_ref": "LLM06 – Excessive Agency",
+        "text": "Do humans review AI outputs before they trigger automated business decisions?",
+        "why": "Fully automated AI decisions without human oversight create legal and operational liability.",
+    },
+    {
+        "id": 12,
+        "function": "MEASURE",
+        "nist_ref": "MEASURE 2.3",
+        "owasp_ref": "LLM05 – Improper Output Handling",
+        "text": "Are this AI's outputs validated or filtered before being shown to customers?",
+        "why": "Unvalidated AI outputs can contain harmful, false, or confidential content reaching end users.",
+    },
+    {
+        "id": 13,
+        "function": "MEASURE",
+        "nist_ref": "MEASURE 2.5",
+        "owasp_ref": "LLM03 – Supply Chain",
+        "text": "Have all third-party data sources and training data been reviewed for integrity and security?",
+        "why": "Poisoned training data or unvetted external sources can corrupt AI behavior at scale.",
+    },
+    {
+        "id": 14,
+        "function": "MEASURE",
+        "nist_ref": "MEASURE 2.11",
+        "owasp_ref": "LLM09 – Misinformation",
+        "text": "Has this AI tool been formally evaluated for accuracy, hallucinations, or bias risks?",
+        "why": "AI tools that hallucinate or produce biased outputs create reputational and legal risk.",
+    },
+
+    # ── MANAGE ──────────────────────────────────────────────────────────────
+    {
+        "id": 15,
+        "function": "MANAGE",
+        "nist_ref": "MANAGE 4.1",
+        "owasp_ref": None,
+        "text": "Is there an audit log recording inputs and outputs from this AI tool?",
+        "why": "Without logs, you cannot investigate incidents, demonstrate compliance, or detect misuse.",
+    },
+    {
+        "id": 16,
+        "function": "MANAGE",
+        "nist_ref": "MANAGE 2.4",
+        "owasp_ref": None,
+        "text": "Do you have a process to disable or isolate this AI tool quickly in a security incident?",
+        "why": "A tool you cannot shut down quickly amplifies the damage of any security breach.",
+    },
+    {
+        "id": 17,
+        "function": "MANAGE",
+        "nist_ref": "MANAGE 1.3",
+        "owasp_ref": "LLM05 – Improper Output Handling",
+        "text": "Are input/output filters or guardrails in place to block harmful or non-compliant content?",
+        "why": "Guardrails are the primary technical defense against harmful AI outputs reaching users.",
+    },
+    {
+        "id": 18,
+        "function": "MANAGE",
+        "nist_ref": "MANAGE 4.2",
+        "owasp_ref": None,
+        "text": "Is this AI tool reviewed periodically for compliance, performance, and data handling practices?",
+        "why": "AI tools drift over time — without periodic reviews, risks accumulate silently.",
+    },
+]
+
+# Scoring logic:
+# Yes = compliant = 0 risk points added
+# No  = non-compliant = Likelihood × Impact risk score added
+# Higher total risk score = lower compliance %
+
+RISK_TIERS = [
+    {"label": "Minimal",      "emoji": "🟢", "min_pct": 80, "max_pct": 100},
+    {"label": "Limited",      "emoji": "🟡", "min_pct": 60, "max_pct": 79},
+    {"label": "High",         "emoji": "🔴", "min_pct": 40, "max_pct": 59},
+    {"label": "Unacceptable", "emoji": "⛔", "min_pct": 0,  "max_pct": 39},
+]
