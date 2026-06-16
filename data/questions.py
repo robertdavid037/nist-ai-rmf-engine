@@ -8,6 +8,7 @@ QUESTIONS = [
         "default_risk": 12,
         "text": "Does your organization have a written policy defining acceptable use of this AI tool?",
         "why": "Without a written policy, employees have no clear boundaries — increasing the chance of misuse or data exposure.",
+        "fix": "Draft a 1-page AI Acceptable Use Policy — define what data employees may and may not share with AI tools. Free templates are available from SANS and NIST.",
     },
     {
         "id": 2,
@@ -17,6 +18,7 @@ QUESTIONS = [
         "default_risk": 9,
         "text": "Is there a designated person responsible for overseeing AI usage and compliance?",
         "why": "AI governance without an owner means no one is accountable when something goes wrong.",
+        "fix": "Designate a named AI owner — a specific person responsible for approving AI tool usage and reviewing compliance on a quarterly basis.",
     },
     {
         "id": 3,
@@ -26,6 +28,7 @@ QUESTIONS = [
         "default_risk": 9,
         "text": "Have employees using this AI tool received training on data handling and appropriate use?",
         "why": "Untrained employees are the most common source of accidental data leaks through AI tools.",
+        "fix": "Run a 30-minute staff briefing on safe AI use — cover what data must never be entered into AI tools, why it matters, and what to do if something goes wrong.",
     },
     {
         "id": 4,
@@ -35,6 +38,7 @@ QUESTIONS = [
         "default_risk": 6,
         "text": "Does your organization maintain an inventory of all AI tools currently in use?",
         "why": "You can't manage risk for tools you don't know exist. Shadow AI is a real threat.",
+        "fix": "Build an AI tool inventory: a simple spreadsheet listing every AI tool in use, who uses it, what data it can access, and when it was last reviewed. Review it quarterly.",
     },
 
     # ── MAP ─────────────────────────────────────────────────────────────────
@@ -46,6 +50,7 @@ QUESTIONS = [
         "default_risk": 20,
         "text": "Are data protection measures in place for any personal customer data this AI accesses?",
         "why": "Personal data processed by AI without controls creates GDPR/PIPEDA/CCPA liability.",
+        "fix": "Audit what personal or customer data this AI tool can access — restrict it to only what is strictly necessary for its function and document the decision.",
     },
     {
         "id": 6,
@@ -55,6 +60,7 @@ QUESTIONS = [
         "default_risk": 15,
         "text": "Are access restrictions in place limiting what confidential business data this AI can reach?",
         "why": "Unrestricted AI access to financials, contracts, or IP is a major data leakage risk.",
+        "fix": "Restrict this AI tool's access to confidential data — financials, contracts, and IP should require explicit approval to reach, with access logged.",
     },
     {
         "id": 7,
@@ -64,6 +70,7 @@ QUESTIONS = [
         "default_risk": 12,
         "text": "Have all third-party API connections used by this AI tool been reviewed and approved for security compliance?",
         "why": "Third-party APIs can exfiltrate your data or introduce compromised model behavior.",
+        "fix": "Document all third-party API connections this tool uses and confirm each provider's data handling and security practices in writing — check their security page or request a SOC 2 report.",
     },
     {
         "id": 8,
@@ -73,6 +80,7 @@ QUESTIONS = [
         "default_risk": 16,
         "text": "Are user inputs filtered or validated before being sent to this AI?",
         "why": "Unfiltered inputs are the primary attack vector for prompt injection — the #1 LLM vulnerability.",
+        "fix": "Add input validation to block sensitive data patterns — email addresses, IDs, financial figures — from being submitted to this AI. Start with a deny-list of data types that should never leave your systems.",
     },
 
     # ── MEASURE ─────────────────────────────────────────────────────────────
@@ -84,6 +92,7 @@ QUESTIONS = [
         "default_risk": 20,
         "text": "Are measures in place to detect and prevent prompt manipulation of this AI?",
         "why": "Without prompt injection defenses, attackers can override the AI's instructions entirely.",
+        "fix": "Enable prompt injection protections: separate system instructions from user input, validate that users cannot override system behaviour, and monitor for unusual instruction patterns in logs.",
     },
     {
         "id": 10,
@@ -93,6 +102,7 @@ QUESTIONS = [
         "default_risk": 12,
         "text": "Are output controls in place to prevent sensitive data from appearing in AI responses?",
         "why": "AI models can inadvertently reproduce training data or context window contents in responses.",
+        "fix": "Configure output filters to automatically detect and redact sensitive data patterns before AI responses are displayed or stored. Test by querying the AI for data it should not reveal.",
     },
     {
         "id": 11,
@@ -102,6 +112,7 @@ QUESTIONS = [
         "default_risk": 9,
         "text": "Do humans review AI outputs before they trigger automated business decisions?",
         "why": "Fully automated AI decisions without human oversight create legal and operational liability.",
+        "fix": "Require human sign-off before any AI output triggers an automated business action or is sent directly to a customer. Document this as a policy and include it in employee training.",
     },
     {
         "id": 12,
@@ -111,6 +122,7 @@ QUESTIONS = [
         "default_risk": 9,
         "text": "Are this AI's outputs validated or filtered before being shown to customers?",
         "why": "Unvalidated AI outputs can contain harmful, false, or confidential content reaching end users.",
+        "fix": "Add a review checkpoint before AI-generated content reaches customers — either a human approval step or an automated content filter configured to flag harmful or confidential output.",
     },
     {
         "id": 13,
@@ -120,6 +132,7 @@ QUESTIONS = [
         "default_risk": 6,
         "text": "Have all third-party data sources and training data been reviewed for integrity and security?",
         "why": "Poisoned training data or unvetted external sources can corrupt AI behavior at scale.",
+        "fix": "Document all external data sources and training data this tool relies on — confirm data provenance, integrity, and vendor security practices. Request data lineage documentation from your vendor.",
     },
     {
         "id": 14,
@@ -129,6 +142,7 @@ QUESTIONS = [
         "default_risk": 6,
         "text": "Has this AI tool been formally evaluated for accuracy, hallucinations, or bias risks?",
         "why": "AI tools that hallucinate or produce biased outputs create reputational and legal risk.",
+        "fix": "Run a structured accuracy review: test 20 representative queries, document the error rate and any patterns of bias or hallucination, and set a threshold for acceptable performance.",
     },
 
     # ── MANAGE ──────────────────────────────────────────────────────────────
@@ -140,6 +154,7 @@ QUESTIONS = [
         "default_risk": 20,
         "text": "Is there an audit log recording inputs and outputs from this AI tool?",
         "why": "Without logs, you cannot investigate incidents, demonstrate compliance, or detect misuse.",
+        "fix": "Enable audit logging for all inputs sent to and outputs received from this AI tool. Retain logs for a minimum of 90 days and assign a named owner to review them monthly.",
     },
     {
         "id": 16,
@@ -149,6 +164,7 @@ QUESTIONS = [
         "default_risk": 12,
         "text": "Do you have a process to disable or isolate this AI tool quickly in a security incident?",
         "why": "A tool you cannot shut down quickly amplifies the damage of any security breach.",
+        "fix": "Write a 3-step AI incident response procedure: who makes the call to shut it down, how to disable it, and who gets notified within the hour. Test it once per quarter.",
     },
     {
         "id": 17,
@@ -158,6 +174,7 @@ QUESTIONS = [
         "default_risk": 15,
         "text": "Are input/output filters or guardrails in place to block harmful or non-compliant content?",
         "why": "Guardrails are the primary technical defense against harmful AI outputs reaching users.",
+        "fix": "Activate the tool's built-in content filters, or implement a middleware layer to block harmful, confidential, or non-compliant inputs and outputs. Document what the guardrails cover and test them.",
     },
     {
         "id": 18,
@@ -167,6 +184,7 @@ QUESTIONS = [
         "default_risk": 6,
         "text": "Is this AI tool reviewed periodically for compliance, performance, and data handling practices?",
         "why": "AI tools drift over time — without periodic reviews, risks accumulate silently.",
+        "fix": "Schedule a quarterly AI compliance review now — block the time, assign an owner, and use this report as the baseline. Set a calendar reminder 2 weeks before each review date.",
     },
 ]
 

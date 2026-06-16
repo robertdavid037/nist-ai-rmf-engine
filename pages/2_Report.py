@@ -8,6 +8,7 @@ from database.db import get_connection
 from data.questions import QUESTIONS
 from pdf_export import generate_pdf
 from sidebar import render_sidebar
+from verdict import get_verdict
 
 st.set_page_config(
     page_title="Compliance Report — NIST AI RMF",
@@ -64,9 +65,12 @@ responses = [
 conn.close()
 
 questions_by_id = {q["id"]: q for q in QUESTIONS}
-tier = assessment["risk_tier"]
+tier  = assessment["risk_tier"]
 color = TIER_BG.get(tier, "#888")
 emoji = TIER_EMOJI.get(tier, "")
+
+no_responses = [r for r in responses if r["answer"] == "No"]
+no_responses.sort(key=lambda x: x["risk_score"], reverse=True)
 
 # ── Nav bar: back + PDF download ──────────────────────────────────────────────
 col_back, col_pdf = st.columns([5, 1])
@@ -104,6 +108,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# ── Plain-English verdict ─────────────────────────────────────────────────────
+verdict_text = get_verdict(assessment, tool)
+st.markdown(
+    f"<div style='background:#f8f9fa; border-left:4px solid {color}; "
+    f"padding:16px 20px; border-radius:4px; margin-bottom:16px; "
+    f"font-size:15px; line-height:1.6; color:#2c3e50'>{verdict_text}</div>",
+    unsafe_allow_html=True,
+)
+
 # ── Overall score ─────────────────────────────────────────────────────────────
 col_pct, col_score, col_spacer = st.columns([1, 1, 3])
 with col_pct:
@@ -129,26 +142,55 @@ for col_key, label in FUNCTION_LABELS.items():
 
 st.divider()
 
-# ── Priority fix list ─────────────────────────────────────────────────────────
-no_responses = [r for r in responses if r["answer"] == "No"]
-no_responses.sort(key=lambda x: x["risk_score"], reverse=True)
+# ── Top 3 priority actions ────────────────────────────────────────────────────
+if no_responses:
+    top3 = no_responses[:3]
+    st.subheader("⚡ Top 3 Priority Actions")
+    st.caption("Fix these first — highest risk, biggest compliance impact.")
 
+    for i, r in enumerate(top3, 1):
+        q    = questions_by_id[r["question_id"]]
+        risk = r["risk_score"]
+        badge_color = "#e74c3c" if risk >= 16 else "#f39c12" if risk >= 9 else "#3498db"
+
+        with st.container(border=True):
+            col_num, col_content, col_badge = st.columns([0.15, 8, 1])
+            with col_num:
+                st.markdown(
+                    f"<div style='font-size:28px; font-weight:800; color:{badge_color}; "
+                    f"line-height:1'>{i}</div>",
+                    unsafe_allow_html=True,
+                )
+            with col_content:
+                st.markdown(f"**{q['text']}**")
+                st.markdown(
+                    f"<div style='color:#27ae60; font-size:14px; margin-top:4px'>"
+                    f"→ {q['fix']}</div>",
+                    unsafe_allow_html=True,
+                )
+            with col_badge:
+                st.markdown(
+                    f"<div style='background:{badge_color}; color:white; text-align:center; "
+                    f"padding:5px 8px; border-radius:8px; font-weight:700; font-size:13px; "
+                    f"margin-top:4px'>Risk {risk}</div>",
+                    unsafe_allow_html=True,
+                )
+
+    st.divider()
+
+# ── Full fix list ─────────────────────────────────────────────────────────────
 if not no_responses:
     st.success("🎉 Fully compliant — no gaps found!")
 else:
-    st.subheader(f"🔧 Priority Fix List ({len(no_responses)} gap{'s' if len(no_responses) != 1 else ''} found)")
-    st.caption("Sorted highest risk first. Address these to improve your compliance score.")
+    remaining = no_responses[3:]
+    label = f"🔧 All Gaps ({len(no_responses)} found)"
+    st.subheader(label)
+    st.caption("Complete remediation list sorted by risk score.")
 
     for i, r in enumerate(no_responses, 1):
-        q = questions_by_id[r["question_id"]]
+        q    = questions_by_id[r["question_id"]]
         risk = r["risk_score"]
-
-        if risk >= 16:
-            badge_color = "#e74c3c"
-        elif risk >= 9:
-            badge_color = "#f39c12"
-        else:
-            badge_color = "#3498db"
+        badge_color = "#e74c3c" if risk >= 16 else "#f39c12" if risk >= 9 else "#3498db"
 
         with st.container(border=True):
             col_q, col_badge = st.columns([9, 1])
@@ -161,9 +203,11 @@ else:
                     f"Risk {risk}</div>",
                     unsafe_allow_html=True,
                 )
-
             st.info(f"**Why this matters:** {q['why']}")
-
+            st.markdown(
+                f"<div style='color:#27ae60; font-size:13px; padding:4px 0'>→ {q['fix']}</div>",
+                unsafe_allow_html=True,
+            )
             refs = q["nist_ref"]
             if q["owasp_ref"]:
                 refs += f" · {q['owasp_ref']}"
