@@ -178,40 +178,38 @@ if no_responses:
 
     st.divider()
 
-# ── Full fix list ─────────────────────────────────────────────────────────────
+# ── Full gap list ─────────────────────────────────────────────────────────────
 if not no_responses:
     st.success("🎉 Fully compliant — no gaps found!")
 else:
     remaining = no_responses[3:]
-    label = f"🔧 All Gaps ({len(no_responses)} found)"
-    st.subheader(label)
-    st.caption("Complete remediation list sorted by risk score.")
+    if remaining:
+        with st.expander(f"🔧 View all {len(no_responses)} gaps (showing {len(remaining)} additional below top 3)"):
+            for i, r in enumerate(remaining, 4):
+                q    = questions_by_id[r["question_id"]]
+                risk = r["risk_score"]
+                badge_color = "#e74c3c" if risk >= 16 else "#f39c12" if risk >= 9 else "#3498db"
 
-    for i, r in enumerate(no_responses, 1):
-        q    = questions_by_id[r["question_id"]]
-        risk = r["risk_score"]
-        badge_color = "#e74c3c" if risk >= 16 else "#f39c12" if risk >= 9 else "#3498db"
-
-        with st.container(border=True):
-            col_q, col_badge = st.columns([9, 1])
-            with col_q:
-                st.markdown(f"**{i}. {q['text']}**")
-            with col_badge:
-                st.markdown(
-                    f"<div style='background:{badge_color}; color:white; text-align:center; "
-                    f"padding:5px 8px; border-radius:8px; font-weight:700; font-size:13px'>"
-                    f"Risk {risk}</div>",
-                    unsafe_allow_html=True,
-                )
-            st.info(f"**Why this matters:** {q['why']}")
-            st.markdown(
-                f"<div style='color:#27ae60; font-size:13px; padding:4px 0'>→ {q['fix']}</div>",
-                unsafe_allow_html=True,
-            )
-            refs = q["nist_ref"]
-            if q["owasp_ref"]:
-                refs += f" · {q['owasp_ref']}"
-            st.caption(f"References: {refs}  ·  Risk Score: {risk}")
+                with st.container(border=True):
+                    col_q, col_badge = st.columns([9, 1])
+                    with col_q:
+                        st.markdown(f"**{i}. {q['text']}**")
+                    with col_badge:
+                        st.markdown(
+                            f"<div style='background:{badge_color}; color:white; text-align:center; "
+                            f"padding:5px 8px; border-radius:8px; font-weight:700; font-size:13px'>"
+                            f"Risk {risk}</div>",
+                            unsafe_allow_html=True,
+                        )
+                    st.info(f"**Why this matters:** {q['why']}")
+                    st.markdown(
+                        f"<div style='color:#27ae60; font-size:13px; padding:4px 0'>→ {q['fix']}</div>",
+                        unsafe_allow_html=True,
+                    )
+                    refs = q["nist_ref"]
+                    if q["owasp_ref"]:
+                        refs += f" · {q['owasp_ref']}"
+                    st.caption(f"References: {refs}  ·  Risk Score: {risk}")
 
 # ── Compliant controls (collapsible) ─────────────────────────────────────────
 yes_responses = [r for r in responses if r["answer"] == "Yes"]
