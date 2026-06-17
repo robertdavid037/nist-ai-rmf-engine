@@ -13,12 +13,21 @@ def get_connection():
     return conn
 
 
+def _migrate(conn):
+    """Add columns introduced after initial schema without breaking existing DBs."""
+    columns = [row[1] for row in conn.execute("PRAGMA table_info(assessments)")]
+    if "loi25_pct" not in columns:
+        conn.execute("ALTER TABLE assessments ADD COLUMN loi25_pct INTEGER DEFAULT 100")
+    conn.commit()
+
+
 def init_db():
     """Create tables if they don't exist yet, then seed demo data if DB is empty."""
     with open(SCHEMA_PATH, "r") as f:
         schema = f.read()
     conn = get_connection()
     conn.executescript(schema)
+    _migrate(conn)
     conn.commit()
 
     # Auto-seed demo data on first run (handles cloud deployments with ephemeral DBs)

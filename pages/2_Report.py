@@ -66,8 +66,13 @@ tier  = assessment["risk_tier"]
 color = TIER_BG.get(tier, "#888")
 emoji = TIER_EMOJI.get(tier, "")
 
-no_responses = [r for r in responses if r["answer"] == "No"]
+nist_ids   = [q["id"] for q in QUESTIONS if q.get("framework", "NIST") == "NIST"]
+loi25_ids  = [q["id"] for q in QUESTIONS if q.get("framework") == "LOI25"]
+
+no_responses       = [r for r in responses if r["answer"] == "No" and r["question_id"] in nist_ids]
 no_responses.sort(key=lambda x: x["risk_score"], reverse=True)
+loi25_no_responses = [r for r in responses if r["answer"] == "No" and r["question_id"] in loi25_ids]
+loi25_no_responses.sort(key=lambda x: x["risk_score"], reverse=True)
 
 # ── Nav bar: back + PDF download ──────────────────────────────────────────────
 col_back, col_pdf = st.columns([5, 1])
@@ -220,6 +225,51 @@ else:
                     if q["owasp_ref"]:
                         refs += f" · {q['owasp_ref']}"
                     st.caption(f"{t('references')} {refs}  ·  {t('risk_score_ref')} {risk}")
+
+# ── Loi 25 section ───────────────────────────────────────────────────────────
+st.divider()
+st.subheader(t("loi25_section"))
+
+loi25_pct   = assessment.get("loi25_pct", 100)
+loi25_color = "#27ae60" if loi25_pct >= 80 else "#f39c12" if loi25_pct >= 60 else "#e74c3c" if loi25_pct >= 40 else "#6c3483"
+
+col_l25, col_l25_bar, col_l25_val = st.columns([2, 5, 1])
+with col_l25:
+    st.metric(t("loi25_score"), f"{loi25_pct}%")
+with col_l25_bar:
+    st.write("")
+    st.progress(loi25_pct / 100)
+with col_l25_val:
+    st.write("")
+
+st.caption(t("loi25_disclaimer"))
+
+if not loi25_no_responses:
+    st.success(t("loi25_compliant"))
+else:
+    for i, r in enumerate(loi25_no_responses, 1):
+        q    = questions_by_id[r["question_id"]]
+        risk = r["risk_score"]
+        badge_color = "#e74c3c" if risk >= 16 else "#f39c12" if risk >= 9 else "#3498db"
+
+        with st.container(border=True):
+            col_q, col_badge = st.columns([9, 1])
+            with col_q:
+                st.markdown(f"**{i}. {qt(q, 'text', lang)}**")
+                st.caption(f"{t('loi25_ref_label')} {q.get('loi25_ref', q['nist_ref'])}")
+            with col_badge:
+                st.markdown(
+                    f"<div style='background:{badge_color}; color:white; text-align:center; "
+                    f"padding:5px 8px; border-radius:8px; font-weight:700; font-size:13px'>"
+                    f"{t('risk')} {risk}</div>",
+                    unsafe_allow_html=True,
+                )
+            st.info(f"{t('why_matters_bold')}{qt(q, 'why', lang)}")
+            st.markdown(
+                f"<div style='color:#27ae60; font-size:13px; padding:4px 0'>"
+                f"→ {qt(q, 'fix', lang)}</div>",
+                unsafe_allow_html=True,
+            )
 
 # ── Compliant controls (collapsible) ─────────────────────────────────────────
 yes_responses = [r for r in responses if r["answer"] == "Yes"]

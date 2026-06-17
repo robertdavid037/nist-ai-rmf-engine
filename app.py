@@ -68,7 +68,8 @@ conn = get_connection()
 rows = conn.execute("""
     SELECT t.name, t.vendor, t.category,
            a.id AS assessment_id,
-           a.compliance_pct, a.risk_tier, a.assessed_at, a.next_review_date
+           a.compliance_pct, a.risk_tier, a.assessed_at, a.next_review_date,
+           a.loi25_pct
     FROM tools t
     JOIN assessments a ON a.tool_id = t.id
     WHERE a.id = (
@@ -115,7 +116,12 @@ else:
                     unsafe_allow_html=True,
                 )
 
-                st.metric(t("compliance"), f"{pct}%")
+                col_nist, col_l25 = st.columns(2)
+                with col_nist:
+                    st.metric(t("compliance"), f"{pct}%")
+                with col_l25:
+                    l25 = tool.get("loi25_pct", 100)
+                    st.metric(t("loi25_score"), f"{l25}%")
                 st.progress(pct / 100)
 
                 assessed = tool["assessed_at"][:10]

@@ -59,7 +59,7 @@ def _bar(pdf, x, y, w, h, pct):
         pdf.rect(x, y, fill_w, h, "F")
 
 
-def generate_pdf(assessment, tool, responses, questions_by_id, lang="fr"):
+def generate_pdf(assessment, tool, responses, questions_by_id, lang="fr"):  # noqa: C901
     """Return bytes of a PDF compliance report in the requested language."""
     pdf = FPDF()
     pdf.set_margins(LM, 10, LM)
@@ -168,7 +168,8 @@ def generate_pdf(assessment, tool, responses, questions_by_id, lang="fr"):
         pdf.ln(8)
 
     # ── Top 3 priority actions ────────────────────────────────────────────────
-    no_responses = [r for r in responses if r["answer"] == "No"]
+    no_responses = [r for r in responses if r["answer"] == "No"
+                    and questions_by_id.get(r["question_id"], {}).get("framework", "NIST") == "NIST"]
     no_responses.sort(key=lambda x: x["risk_score"], reverse=True)
 
     if no_responses:
@@ -214,6 +215,53 @@ def generate_pdf(assessment, tool, responses, questions_by_id, lang="fr"):
 
             pdf.set_text_color(0, 0, 0)
             pdf.ln(3)
+
+    # ── Loi 25 section ───────────────────────────────────────────────────────
+    loi25_responses = [r for r in responses if r["answer"] == "No"
+                       and questions_by_id.get(r["question_id"], {}).get("framework") == "LOI25"]
+    loi25_pct = assessment.get("loi25_pct", 100)
+
+    pdf.ln(4)
+    pdf.set_x(LM)
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.set_text_color(0, 0, 0)
+    pdf.cell(W, 7, _s(_T("pdf_loi25_title", lang)), ln=True)
+
+    # Loi 25 score bar
+    row_y = pdf.get_y()
+    pdf.set_x(LM)
+    pdf.set_font("Helvetica", "", 10)
+    loi25_label = "Score Loi 25:" if lang == "fr" else "Law 25 Score:"
+    pdf.cell(75, 7, loi25_label)
+    pdf.cell(12, 7, f"{loi25_pct}%")
+    _bar(pdf, 100, row_y + 1.5, 100, 4, loi25_pct)
+    pdf.ln(8)
+
+    pdf.set_x(LM)
+    pdf.set_font("Helvetica", "I", 8)
+    pdf.set_text_color(100, 100, 100)
+    pdf.multi_cell(W, 4, _s(_T("pdf_loi25_disclaimer", lang)))
+    pdf.ln(2)
+
+    if loi25_responses:
+        for i, r in enumerate(sorted(loi25_responses, key=lambda x: x["risk_score"], reverse=True), 1):
+            q       = questions_by_id.get(r["question_id"], {})
+            q_text  = _s(_qt(q, "text", lang)) if q else f"Question {r['question_id']}"
+            q_fix   = _s(_qt(q, "fix",  lang)) if q else ""
+            loi_ref = _s(q.get("loi25_ref", q.get("nist_ref", ""))) if q else ""
+            risk    = r["risk_score"]
+
+            pdf.set_x(LM)
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.set_text_color(0, 0, 0)
+            pdf.multi_cell(W, 5, f"{i}. {q_text}  [{loi_ref}  |  {_T('pdf_risk_label', lang)} {risk}]")
+
+            pdf.set_x(LM)
+            pdf.set_font("Helvetica", "I", 9)
+            pdf.set_text_color(39, 174, 96)
+            pdf.multi_cell(W, 5, f"   -> {q_fix}")
+            pdf.set_text_color(0, 0, 0)
+            pdf.ln(2)
 
     # ── Full gap analysis ─────────────────────────────────────────────────────
     pdf.ln(4)

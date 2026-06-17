@@ -89,6 +89,7 @@ FUNCTION_HEADERS = {
     "MAP":    t("fn_map"),
     "MEASURE":t("fn_measure"),
     "MANAGE": t("fn_manage"),
+    "LOI25":  t("loi25_section"),
 }
 
 yes_label = t("answer_yes")
@@ -101,6 +102,12 @@ for q in QUESTIONS:
     fn = q["function"]
     if fn != current_function:
         current_function = fn
+        if fn == "LOI25":
+            st.divider()
+            st.info(
+                f"**{t('loi25_section')}**\n\n{t('loi25_disclaimer')}",
+                icon="🔒",
+            )
         st.subheader(FUNCTION_HEADERS[fn])
 
     q_id     = q["id"]
@@ -110,7 +117,7 @@ for q in QUESTIONS:
     with st.container(border=True):
         st.markdown(f"**Q{q_id}. {q_text}**")
         ref_str = f"*{q['nist_ref']}"
-        if q["owasp_ref"]:
+        if q.get("owasp_ref"):
             ref_str += f" · {q['owasp_ref']}"
         ref_str += "*"
         st.caption(ref_str)

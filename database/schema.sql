@@ -38,7 +38,10 @@ CREATE TABLE IF NOT EXISTS assessments (
     govern_pct          INTEGER DEFAULT 100,
     map_pct             INTEGER DEFAULT 100,
     measure_pct         INTEGER DEFAULT 100,
-    manage_pct          INTEGER DEFAULT 100
+    manage_pct          INTEGER DEFAULT 100,
+
+    -- Loi 25 Quebec compliance score (separate from NIST)
+    loi25_pct           INTEGER DEFAULT 100
 );
 
 -- ─────────────────────────────────────────────────────────────────────────────

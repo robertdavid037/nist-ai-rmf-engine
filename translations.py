@@ -91,6 +91,17 @@ TRANSLATIONS = {
         "col_next_review":      "**Prochaine révision**",
         "btn_view":             "Voir →",
 
+        # Loi 25 section
+        "loi25_section":        "🔒 Loi 25 — Protection des renseignements personnels (Québec)",
+        "loi25_score":          "Score Loi 25",
+        "loi25_compliance":     "Conformité Loi 25",
+        "loi25_ref_label":      "Réf. Loi 25 :",
+        "loi25_gaps_title":     "Lacunes Loi 25",
+        "loi25_compliant":      "🎉 Pleinement conforme à la Loi 25 — aucune lacune détectée !",
+        "loi25_disclaimer":     "Ce rapport fournit une orientation basée sur les exigences publiques de la Loi 25. Consultez un avocat spécialisé en protection de la vie privée pour un avis juridique.",
+        "pdf_loi25_title":      "Conformite - Loi 25 du Quebec",
+        "pdf_loi25_disclaimer": "Orientation basee sur les exigences publiques de la Loi 25. Consultez un avocat specialise pour un avis juridique.",
+
         # PDF strings
         "pdf_title":            "Rapport de conformité NIST AI RMF",
         "pdf_confidential":     "CONFIDENTIEL  |  Généré le",
@@ -196,6 +207,17 @@ TRANSLATIONS = {
         "col_risk_tier":        "**Risk Tier**",
         "col_next_review":      "**Next Review**",
         "btn_view":             "View →",
+
+        # Loi 25 section
+        "loi25_section":        "🔒 Law 25 — Personal Information Protection (Quebec)",
+        "loi25_score":          "Law 25 Score",
+        "loi25_compliance":     "Law 25 Compliance",
+        "loi25_ref_label":      "Law 25 Ref.:",
+        "loi25_gaps_title":     "Law 25 Gaps",
+        "loi25_compliant":      "🎉 Fully compliant with Law 25 — no gaps found!",
+        "loi25_disclaimer":     "This report provides guidance based on publicly available Law 25 requirements. Consult a Quebec privacy lawyer for legal advice.",
+        "pdf_loi25_title":      "Compliance - Quebec Law 25",
+        "pdf_loi25_disclaimer": "Guidance based on publicly available Law 25 requirements. Consult a privacy lawyer for legal advice.",
 
         # PDF strings
         "pdf_title":            "NIST AI RMF Compliance Report",
