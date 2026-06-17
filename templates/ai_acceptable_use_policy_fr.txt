@@ -1,0 +1,180 @@
+================================================================================
+POLITIQUE D'UTILISATION ACCEPTABLE DES OUTILS D'INTELLIGENCE ARTIFICIELLE
+================================================================================
+
+Outil évalué   : {tool_name} ({vendor})
+Organisation   : {org_name}
+Date évaluation: {assessed_at}
+Évaluateur     : {assessor_name}
+En vigueur le  : {date}
+Prochaine révision : {next_review_date}
+
+Niveau de risque NIST AI RMF : {risk_tier_fr}
+Score de conformité NIST     : {compliance_pct}%
+Score de conformité Loi 25   : {loi25_pct}%
+
+================================================================================
+1. OBJET
+================================================================================
+
+La présente politique établit les règles d'utilisation acceptable de l'outil
+d'intelligence artificielle {tool_name}, fourni par {vendor}, au sein de
+{org_name}. Elle encadre l'utilisation responsable de cet outil en assurant la
+conformité au NIST AI Risk Management Framework 1.0 et à la Loi modernisant des
+dispositions législatives en matière de protection des renseignements personnels
+(Loi 25, Québec, L.R.Q., c. P-39.1).
+
+================================================================================
+2. CHAMP D'APPLICATION
+================================================================================
+
+Cette politique s'applique à l'ensemble des employés, sous-traitants, stagiaires
+et partenaires de {org_name} ayant accès à {tool_name}, peu importe leur lieu
+de travail.
+
+================================================================================
+3. DESCRIPTION DE L'OUTIL
+================================================================================
+
+  Outil      : {tool_name}
+  Fournisseur: {vendor}
+  Catégorie  : {category}
+
+{tool_name} est un outil d'intelligence artificielle de la catégorie {category}.
+Son utilisation peut impliquer le traitement de données incluant des
+renseignements personnels ou des informations confidentielles de l'organisation.
+
+================================================================================
+4. RÉSUMÉ DE L'ÉVALUATION DE RISQUES
+================================================================================
+
+Évaluation réalisée le {assessed_at} par {assessor_name}.
+
+  Conformité globale NIST AI RMF         : {compliance_pct}%
+  Conformité Loi 25 (Québec)             : {loi25_pct}%
+  Niveau de risque global                : {risk_tier_fr}
+
+  Scores par fonction NIST :
+    GOVERN  — Politiques & responsabilisation : {govern_pct}%
+    MAP     — Classification des données      : {map_pct}%
+    MEASURE — Évaluation technique des risques: {measure_pct}%
+    MANAGE  — Traitement des risques          : {manage_pct}%
+
+Lacunes identifiées lors de l'évaluation ({gaps_count} au total) :
+{gaps_list}
+
+================================================================================
+5. UTILISATIONS AUTORISÉES
+================================================================================
+
+Les employés de {org_name} sont autorisés à utiliser {tool_name} pour :
+
+  a) Les tâches de {category} directement liées à leurs fonctions approuvées ;
+  b) La rédaction, la révision et la synthèse de documents non confidentiels ;
+  c) La génération d'idées ou de suggestions, à condition qu'un humain valide
+     chaque résultat avant toute décision ou communication externe ;
+  d) Les tâches techniques internes ne comportant aucun renseignement personnel
+     identifiable concernant des clients, employés ou tiers ;
+  e) La formation et l'expérimentation sur des données fictives ou anonymisées.
+
+================================================================================
+6. UTILISATIONS INTERDITES
+================================================================================
+
+Il est strictement interdit d'utiliser {tool_name} pour :
+
+  a) Traiter des renseignements personnels sensibles (données de santé, données
+     financières, dossiers disciplinaires ou judiciaires) sans contrôles de
+     protection en place et sans analyse d'impact (AIPRP) préalable ;
+  b) Prendre des décisions finales concernant des individus (embauche, crédit,
+     accès à des services, évaluations de performance) sans révision humaine
+     obligatoire et sans mécanisme de contestation ;
+  c) Partager des secrets commerciaux, de la propriété intellectuelle protégée,
+     des contrats confidentiels ou des données de clients dans le système ;
+  d) Contourner des processus de contrôle, d'audit ou de conformité internes ;
+  e) Générer, diffuser ou amplifier du contenu trompeur, discriminatoire ou
+     contraire aux valeurs de {org_name} ;
+  f) Toute utilisation contraire à la Loi 25 (Québec), à la LPRPDE, au RGPD
+     le cas échéant, ou à toute autre loi sur la protection des données.
+
+================================================================================
+7. OBLIGATIONS DE TRANSPARENCE — LOI 25, ART. 12.1
+================================================================================
+
+Conformément à l'article 12.1 de la Loi 25, si {tool_name} est utilisé pour
+rendre des décisions fondées exclusivement sur le traitement automatisé de
+renseignements personnels ayant des effets juridiques ou significatifs sur une
+personne, {org_name} doit :
+
+  • Informer la personne concernée de l'utilisation de cette technologie ;
+  • Lui communiquer les renseignements personnels utilisés pour la décision ;
+  • Lui offrir la possibilité de faire réviser la décision par un humain ;
+  • Lui permettre de présenter ses observations.
+
+Référez-vous à l'Avis de décision automatisée généré séparément pour le texte
+de divulgation requis.
+
+================================================================================
+8. RESPONSABILITÉS
+================================================================================
+
+Employés :
+  • Utiliser {tool_name} uniquement aux fins autorisées ci-dessus.
+  • Valider systématiquement les sorties de l'outil avant toute utilisation
+    dans un contexte décisionnel, client ou public.
+  • Signaler tout incident, comportement inattendu ou fuite de données au
+    responsable de la protection des renseignements personnels (RPRP) dans
+    les 24 heures.
+
+Gestionnaires :
+  • S'assurer que les membres de leur équipe ont pris connaissance de cette
+    politique et ont confirmé leur compréhension par écrit.
+  • Surveiller l'utilisation de {tool_name} dans leur périmètre.
+
+Responsable de la protection des renseignements personnels (RPRP) :
+  • Tenir à jour le registre des outils IA autorisés et des évaluations de
+    conformité associées.
+  • Coordonner les analyses d'impact sur la protection de la vie privée (AIPRP)
+    exigées par la Loi 25 lorsque requis.
+  • Assurer la révision de cette politique au plus tard à la date indiquée.
+
+================================================================================
+9. SANCTIONS
+================================================================================
+
+Tout manquement à la présente politique peut entraîner des mesures disciplinaires
+pouvant aller jusqu'au congédiement, ainsi que des poursuites civiles ou pénales
+en vertu des lois sur la protection des renseignements personnels applicables.
+
+================================================================================
+10. RÉVISION ET MISE À JOUR
+================================================================================
+
+Cette politique doit être révisée au plus tard le {next_review_date}, ou dès
+l'apparition d'un changement significatif dans :
+  • Les fonctionnalités ou pratiques de données de {vendor} ;
+  • Les exigences légales applicables (Loi 25, LPRPDE) ;
+  • Le profil de risque NIST AI RMF de {tool_name}.
+
+================================================================================
+APPROBATION
+================================================================================
+
+Approuvé par : ________________________________  Date : ________________
+
+Titre        : ________________________________
+
+Signature    : ________________________________
+
+================================================================================
+AVIS LÉGAL
+================================================================================
+
+Ce document a été généré automatiquement à partir d'une évaluation de conformité
+NIST AI RMF. Il constitue un point de départ pratique et doit être adapté par
+un conseiller juridique ou un expert en gouvernance IA avant adoption officielle.
+Consultez un avocat spécialisé en protection des renseignements personnels pour
+les exigences spécifiques à votre secteur d'activité et votre province.
+
+Généré par le Moteur de conformité NIST AI RMF | {org_name} | {date}
+================================================================================

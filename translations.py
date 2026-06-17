@@ -102,6 +102,14 @@ TRANSLATIONS = {
         "pdf_loi25_title":      "Conformite - Loi 25 du Quebec",
         "pdf_loi25_disclaimer": "Orientation basee sur les exigences publiques de la Loi 25. Consultez un avocat specialise pour un avis juridique.",
 
+        # Document generator
+        "docs_section_label":   "📄 Télécharger les documents de politique",
+        "docs_org_name_label":  "Nom de votre organisation",
+        "docs_org_name_ph":     "ex. : Acme Inc.",
+        "btn_doc_aup":          "⬇ Politique d'utilisation acceptable",
+        "btn_doc_adn":          "⬇ Avis de décision automatisée (Loi 25)",
+        "btn_doc_vrs":          "⬇ Sommaire de risque fournisseur",
+
         # PDF strings
         "pdf_title":            "Rapport de conformité NIST AI RMF",
         "pdf_confidential":     "CONFIDENTIEL  |  Généré le",
@@ -218,6 +226,14 @@ TRANSLATIONS = {
         "loi25_disclaimer":     "This report provides guidance based on publicly available Law 25 requirements. Consult a Quebec privacy lawyer for legal advice.",
         "pdf_loi25_title":      "Compliance - Quebec Law 25",
         "pdf_loi25_disclaimer": "Guidance based on publicly available Law 25 requirements. Consult a privacy lawyer for legal advice.",
+
+        # Document generator
+        "docs_section_label":   "📄 Download Policy Documents",
+        "docs_org_name_label":  "Your Organization Name",
+        "docs_org_name_ph":     "e.g. Acme Inc.",
+        "btn_doc_aup":          "⬇ Acceptable Use Policy",
+        "btn_doc_adn":          "⬇ Automated Decision Notice (Law 25)",
+        "btn_doc_vrs":          "⬇ Vendor Risk Summary",
 
         # PDF strings
         "pdf_title":            "NIST AI RMF Compliance Report",

@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from database.db import get_connection
 from data.questions import QUESTIONS
 from pdf_export import generate_pdf
+from doc_generator import generate_doc
 from sidebar import render_sidebar
 from verdict import get_verdict
 from translations import t, qt
@@ -95,6 +96,58 @@ with col_pdf:
         type="primary",
         use_container_width=True,
     )
+
+# ── Policy document downloads ─────────────────────────────────────────────────
+with st.expander(t("docs_section_label"), expanded=False):
+    org_name = st.text_input(
+        t("docs_org_name_label"),
+        placeholder=t("docs_org_name_ph"),
+        key="doc_org_name",
+    )
+
+    doc_col1, doc_col2, doc_col3 = st.columns(3)
+
+    with doc_col1:
+        aup_text = generate_doc(
+            "acceptable_use", assessment, tool, responses, questions_by_id,
+            lang=lang, org_name=org_name or None,
+        )
+        aup_fname = f"Politique_UtilisationAcceptable_{tool['name'].replace(' ', '_')}_{assessment['assessed_at'][:10]}.txt"
+        st.download_button(
+            t("btn_doc_aup"),
+            data=aup_text.encode("utf-8"),
+            file_name=aup_fname,
+            mime="text/plain",
+            use_container_width=True,
+        )
+
+    with doc_col2:
+        adn_text = generate_doc(
+            "automated_decision", assessment, tool, responses, questions_by_id,
+            lang=lang, org_name=org_name or None,
+        )
+        adn_fname = f"Avis_DecisionAutomatisee_{tool['name'].replace(' ', '_')}_{assessment['assessed_at'][:10]}.txt"
+        st.download_button(
+            t("btn_doc_adn"),
+            data=adn_text.encode("utf-8"),
+            file_name=adn_fname,
+            mime="text/plain",
+            use_container_width=True,
+        )
+
+    with doc_col3:
+        vrs_text = generate_doc(
+            "vendor_risk", assessment, tool, responses, questions_by_id,
+            lang=lang, org_name=org_name or None,
+        )
+        vrs_fname = f"SommaireRisque_{tool['name'].replace(' ', '_')}_{assessment['assessed_at'][:10]}.txt"
+        st.download_button(
+            t("btn_doc_vrs"),
+            data=vrs_text.encode("utf-8"),
+            file_name=vrs_fname,
+            mime="text/plain",
+            use_container_width=True,
+        )
 
 # ── Report header ─────────────────────────────────────────────────────────────
 st.markdown(f"# {tool['name']}")

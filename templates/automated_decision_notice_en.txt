@@ -1,0 +1,154 @@
+================================================================================
+AUTOMATED DECISION DISCLOSURE NOTICE
+Pursuant to Article 12.1 of Quebec's Law 25 (Bill 64)
+================================================================================
+
+Organization   : {org_name}
+AI Tool        : {tool_name} ({vendor})
+Date           : {date}
+Reviewed by    : {assessor_name}
+Law 25 Score   : {loi25_pct}%
+
+================================================================================
+1. PURPOSE OF THIS NOTICE
+================================================================================
+
+In accordance with Article 12.1 of Quebec's Act respecting the protection of
+personal information in the private sector (Law 25 / Bill 64), {org_name} is
+informing you that the artificial intelligence tool {tool_name}, provided by
+{vendor}, may be used to render decisions or formulate recommendations based on
+automated processing of personal information.
+
+This notice describes how {tool_name} is used, what personal information is
+processed, and what rights you hold in this regard.
+
+================================================================================
+2. SYSTEM DESCRIPTION AND USE
+================================================================================
+
+Tool    : {tool_name}
+Vendor  : {vendor}
+Category: {category}
+
+{tool_name} is an AI system in the {category} category used by {org_name} to
+[DESCRIBE SPECIFIC USE HERE — e.g., analyze customer interactions and formulate
+service recommendations, evaluate credit applications, prioritize support cases,
+etc.].
+
+Decisions or recommendations produced by this system may have significant effects
+on the individuals concerned, including with respect to [DESCRIBE EFFECTS HERE —
+e.g., access to services, personalized pricing, communication prioritization,
+etc.].
+
+================================================================================
+3. PERSONAL INFORMATION USED
+================================================================================
+
+As part of this automated processing, {tool_name} may use the following
+categories of personal information:
+
+  • [CATEGORY 1 — e.g., Name, first name, contact information]
+  • [CATEGORY 2 — e.g., Purchase or interaction history]
+  • [CATEGORY 3 — e.g., Declared or inferred preferences and behaviors]
+  • [CATEGORY 4 — e.g., Demographic data]
+  • [ADD RELEVANT CATEGORIES BASED ON YOUR ACTUAL PRACTICES]
+
+This information is collected by {org_name} and transmitted to {vendor} for
+processing. Refer to {org_name}'s privacy policy and {vendor}'s terms of service
+for details on data retention, security, and transfers.
+
+================================================================================
+4. SYSTEM LOGIC AND OPERATION
+================================================================================
+
+{tool_name} uses machine learning algorithms to analyze the personal information
+listed above and [DESCRIBE LOGIC HERE — e.g., calculate a propensity score,
+group similar profiles, generate personalized recommendations, identify
+anomalies, etc.].
+
+The system considers the following factors when producing its results:
+  • [FACTOR 1]
+  • [FACTOR 2]
+  • [FACTOR 3]
+
+Note: Final decisions that have significant effects on your situation are reviewed
+and confirmed by a qualified {org_name} employee before being communicated or
+implemented.
+
+Law 25 compliance assessment (score: {loi25_pct}%):
+{gaps_list}
+
+================================================================================
+5. YOUR RIGHTS — LAW 25, ARTICLE 12.1
+================================================================================
+
+Pursuant to Article 12.1 of Law 25, you have the following rights:
+
+  a) RIGHT TO BE INFORMED
+     You have the right to be informed that your request, file, or situation is
+     or will be subject to automated processing that may produce effects on you.
+
+  b) RIGHT TO AN EXPLANATION
+     You have the right to request and obtain explanations regarding the personal
+     information used to make an automated decision concerning you, as well as
+     the main factors and parameters that influenced the decision.
+
+  c) RIGHT TO HUMAN REVIEW
+     You have the right to request that a qualified human employee of {org_name}
+     review any decision made about you on the basis of automated processing of
+     your personal information.
+
+  d) RIGHT TO PRESENT YOUR VIEWS
+     You have the right to present your observations to {org_name} and to have
+     them considered before a final decision is confirmed or maintained.
+
+================================================================================
+6. HOW TO EXERCISE YOUR RIGHTS
+================================================================================
+
+To exercise any of the rights above, or for any questions regarding automated
+processing of your personal information, please contact:
+
+  Privacy Officer
+  {org_name}
+
+  Email  : [PRIVACY OFFICER EMAIL]
+  Address: [POSTAL ADDRESS]
+  Phone  : [PHONE NUMBER]
+
+{org_name} is committed to responding to your request within a reasonable
+timeframe consistent with Law 25 requirements.
+
+================================================================================
+7. RECOURSE WITH THE COMMISSION D'ACCES A L'INFORMATION
+================================================================================
+
+If you believe your privacy rights have not been respected, you may file a
+complaint with Quebec's Commission d'acces a l'information (CAI):
+
+  Commission d'acces a l'information du Quebec
+  Website  : www.cai.gouv.qc.ca
+  Telephone: 1 888 528-7741
+
+================================================================================
+8. UPDATES TO THIS NOTICE
+================================================================================
+
+This notice will be updated if {org_name} materially changes the way {tool_name}
+is used to make automated decisions about you. The date of the last revision is
+indicated in the header.
+
+Next scheduled review: {next_review_date}
+
+================================================================================
+LEGAL NOTICE
+================================================================================
+
+This notice was prepared from a Law 25 / NIST AI RMF compliance assessment
+(Law 25 score: {loi25_pct}%) and serves as a starting template. It must be
+reviewed and completed by qualified privacy legal counsel before official
+publication. All sections in square brackets [...] must be filled in with
+information specific to your organization and actual practices.
+
+Generated by the NIST AI RMF Compliance Engine | {org_name} | {date}
+================================================================================

@@ -1,0 +1,147 @@
+================================================================================
+AI VENDOR RISK SUMMARY
+NIST AI Risk Management Framework 1.0 + Quebec Law 25
+================================================================================
+
+INTERNAL MEMO — CONFIDENTIAL
+
+To      : Management / AI Governance Committee
+From    : {assessor_name}
+Date    : {date}
+Re      : Risk Assessment — {tool_name} ({vendor})
+Next Review: {next_review_date}
+
+================================================================================
+1. EXECUTIVE SUMMARY
+================================================================================
+
+{tool_name}, an AI tool in the {category} category provided by {vendor}, was
+assessed on {assessed_at} against the NIST AI Risk Management Framework 1.0
+and Quebec Law 25 (Bill 64) requirements.
+
+OVERALL VERDICT:
+
+  NIST AI RMF Risk Tier         : {risk_tier_en}
+  NIST Compliance Score         : {compliance_pct}%
+  Law 25 (Quebec) Compliance    : {loi25_pct}%
+  Gaps Identified               : {gaps_count}
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │ NIST AI RMF: {compliance_pct}%  ──  Law 25: {loi25_pct}%                  │
+  │ Risk Tier: {risk_tier_en}                                       │
+  └─────────────────────────────────────────────────────────────────┘
+
+This assessment documents the current risk profile of {tool_name} and the
+priority remediation actions required to improve {org_name}'s compliance posture.
+
+================================================================================
+2. DETAILED COMPLIANCE PROFILE
+================================================================================
+
+NIST AI RMF — Scores by Function:
+
+  GOVERN  (Policies & Accountability)     : {govern_pct}%
+  MAP     (Data & Risk Classification)    : {map_pct}%
+  MEASURE (Technical Risk Evaluation)     : {measure_pct}%
+  MANAGE  (Risk Treatment & Guardrails)   : {manage_pct}%
+  Overall NIST Score                      : {compliance_pct}%
+
+Law 25 (Quebec):
+
+  Law 25 Compliance Score                 : {loi25_pct}%
+
+Score interpretation:
+  • 80–100%: Minimal      — Low risk, solid compliance
+  • 60–79%:  Limited      — Targeted improvements required
+  • 40–59%:  High         — Significant gaps, action required
+  •  0–39%:  Unacceptable — Critical risk, immediate action required
+
+================================================================================
+3. IDENTIFIED GAPS AND ACTION PLAN
+================================================================================
+
+The following gaps were identified during the assessment on {assessed_at}.
+They are presented in priority order (highest risk score first):
+
+{gaps_list}
+
+================================================================================
+4. RESIDUAL RISK ANALYSIS
+================================================================================
+
+Raw Risk Score: {total_risk_score} / {max_possible_score}
+
+Current Risk Level: {risk_tier_en}
+
+This score represents the accumulated risk of all missing controls identified
+during the assessment. A higher score indicates greater residual risk to
+{org_name}.
+
+Aggravating factors to consider:
+  • Sensitivity of data processed by {tool_name}
+  • Volume of internal users exposed to the tool
+  • Degree of integration with other critical systems
+  • Presence of automated decisions affecting individuals (Law 25 Art. 12.1)
+
+================================================================================
+5. PRIORITY RECOMMENDATIONS
+================================================================================
+
+Based on this assessment, the following actions are recommended in priority order:
+
+CRITICAL PRIORITY (Risk score >= 16):
+  Address within 30 days. See gap list in Section 3.
+
+HIGH PRIORITY (Risk score 9–15):
+  Address within 90 days. See gap list in Section 3.
+
+NORMAL PRIORITY (Risk score < 9):
+  Address at the next review cycle.
+
+Recommended governance actions for {tool_name}:
+  1. Designate an internal owner (AI tool owner) responsible for tracking the
+     remediation of identified gaps.
+  2. Adopt a formal Acceptable Use Policy specific to {tool_name}
+     (see separately generated document).
+  3. Evaluate whether {tool_name} is used for automated decisions affecting
+     individuals (Law 25 Art. 12.1) and publish the required notice if
+     applicable (see separately generated document).
+  4. Schedule a full reassessment for {next_review_date} or whenever a material
+     change occurs in {vendor}'s practices or features.
+
+================================================================================
+6. RECOMMENDED NEXT STEPS
+================================================================================
+
+  [ ] Share this report with relevant stakeholders.
+  [ ] Assign an owner and deadline to each identified gap.
+  [ ] Adopt the generated Acceptable Use Policy.
+  [ ] Publish the Automated Decision Notice if applicable (Law 25 Art. 12.1).
+  [ ] Schedule the next assessment before {next_review_date}.
+  [ ] Consult a privacy lawyer if the Law 25 score is below 60%.
+
+================================================================================
+7. DISCLOSURE AND LIMITATIONS
+================================================================================
+
+This assessment was conducted by {assessor_name} on {assessed_at} using a
+self-assessment questionnaire based on NIST AI RMF 1.0 and publicly available
+Law 25 (Quebec) requirements. It reflects the situation as declared at the time
+of the assessment.
+
+This document does not constitute legal advice. For decisions with legal
+implications, {org_name} should consult a legal advisor specializing in data
+protection and AI governance.
+
+================================================================================
+APPROVAL AND DISTRIBUTION
+================================================================================
+
+Prepared by    : {assessor_name}
+Date           : {assessed_at}
+Distribution   : [List recipients]
+
+This document is CONFIDENTIAL and for internal use only.
+
+Generated by the NIST AI RMF Compliance Engine | {org_name} | {date}
+================================================================================

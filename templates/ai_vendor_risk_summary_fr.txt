@@ -1,0 +1,149 @@
+================================================================================
+SOMMAIRE DE RISQUE — FOURNISSEUR D'IA
+NIST AI Risk Management Framework 1.0 + Loi 25 (Québec)
+================================================================================
+
+MÉMO INTERNE — CONFIDENTIEL
+
+À        : Direction / Comité de gouvernance IA
+De       : {assessor_name}
+Date     : {date}
+Re       : Évaluation de risque — {tool_name} ({vendor})
+Prochaine révision : {next_review_date}
+
+================================================================================
+1. RÉSUMÉ EXÉCUTIF
+================================================================================
+
+{tool_name}, outil d'IA de catégorie {category} fourni par {vendor}, a été
+évalué le {assessed_at} selon le cadre NIST AI Risk Management Framework 1.0
+et les exigences de la Loi 25 du Québec.
+
+VERDICT GLOBAL :
+
+  Niveau de risque NIST AI RMF  : {risk_tier_fr}
+  Score de conformité NIST      : {compliance_pct}%
+  Score de conformité Loi 25    : {loi25_pct}%
+  Lacunes identifiées           : {gaps_count}
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │ NIST AI RMF : {compliance_pct}%  ──  Loi 25 : {loi25_pct}%                │
+  │ Niveau de risque : {risk_tier_fr}                               │
+  └─────────────────────────────────────────────────────────────────┘
+
+Cette évaluation documente le profil de risque actuel de {tool_name} et les
+mesures correctives prioritaires requises pour améliorer la posture de conformité
+de {org_name}.
+
+================================================================================
+2. PROFIL DE CONFORMITÉ DÉTAILLÉ
+================================================================================
+
+NIST AI RMF — Scores par fonction :
+
+  GOVERN  (Politiques & responsabilisation) : {govern_pct}%
+  MAP     (Classification des données)      : {map_pct}%
+  MEASURE (Évaluation technique des risques): {measure_pct}%
+  MANAGE  (Traitement des risques)          : {manage_pct}%
+  Score global NIST                         : {compliance_pct}%
+
+Loi 25 (Québec) :
+
+  Score de conformité Loi 25               : {loi25_pct}%
+
+Interprétation des niveaux :
+  • 80–100% : Minimal   — Risque faible, conformité solide
+  • 60–79%  : Limité    — Améliorations ciblées requises
+  • 40–59%  : Élevé     — Lacunes importantes, action requise
+  •  0–39%  : Inacceptable — Risque critique, action immédiate requise
+
+================================================================================
+3. LACUNES IDENTIFIÉES ET PLAN D'ACTION
+================================================================================
+
+Les lacunes suivantes ont été identifiées lors de l'évaluation du {assessed_at}.
+Elles sont présentées par ordre de priorité (score de risque décroissant) :
+
+{gaps_list}
+
+================================================================================
+4. ANALYSE DE RISQUE RÉSIDUEL
+================================================================================
+
+Score de risque brut : {total_risk_score} / {max_possible_score}
+
+Niveau de risque actuel : {risk_tier_fr}
+
+Ce score représente le risque accumulé de l'ensemble des contrôles manquants
+identifiés lors de l'évaluation. Un score plus élevé indique un risque résiduel
+plus important pour {org_name}.
+
+Facteurs aggravants à considérer :
+  • Sensibilité des données traitées par {tool_name}
+  • Volume d'utilisateurs internes exposés à l'outil
+  • Niveau d'intégration avec d'autres systèmes critiques
+  • Présence de décisions automatisées affectant des individus (Loi 25 Art. 12.1)
+
+================================================================================
+5. RECOMMANDATIONS PRIORITAIRES
+================================================================================
+
+Sur la base des résultats de cette évaluation, les actions suivantes sont
+recommandées par ordre de priorité :
+
+PRIORITÉ CRITIQUE (Score de risque ≥ 16) :
+  À traiter dans les 30 jours. Voir la liste des lacunes à la section 3.
+
+PRIORITÉ ÉLEVÉE (Score de risque 9–15) :
+  À traiter dans les 90 jours. Voir la liste des lacunes à la section 3.
+
+PRIORITÉ NORMALE (Score de risque < 9) :
+  À traiter lors du prochain cycle de révision.
+
+Actions de gouvernance recommandées pour {tool_name} :
+  1. Désigner un responsable interne (propriétaire de l'outil IA) chargé de
+     suivre la remédiation des lacunes identifiées.
+  2. Établir une politique d'utilisation acceptable spécifique à {tool_name}
+     (voir document généré séparément).
+  3. Évaluer si {tool_name} est utilisé pour des décisions automatisées
+     affectant des individus (Loi 25 Art. 12.1) et publier l'avis requis
+     si applicable (voir document généré séparément).
+  4. Planifier une réévaluation complète pour le {next_review_date} ou dès
+     qu'un changement significatif survient dans les pratiques de {vendor}.
+
+================================================================================
+6. PROCHAINES ÉTAPES RECOMMANDÉES
+================================================================================
+
+  [ ] Partager ce rapport avec les parties prenantes concernées.
+  [ ] Assigner un propriétaire et un délai à chaque lacune identifiée.
+  [ ] Adopter la politique d'utilisation acceptable générée.
+  [ ] Publier l'avis de décision automatisée si applicable (Loi 25 Art. 12.1).
+  [ ] Planifier la prochaine évaluation avant le {next_review_date}.
+  [ ] Consulter un avocat spécialisé en vie privée si le score Loi 25 < 60%.
+
+================================================================================
+7. DIVULGATION ET LIMITES
+================================================================================
+
+Cette évaluation a été réalisée par {assessor_name} le {assessed_at} à partir
+d'un questionnaire d'auto-évaluation basé sur le NIST AI RMF 1.0 et les
+exigences publiques de la Loi 25 du Québec. Elle reflète la situation telle
+que déclarée au moment de l'évaluation.
+
+Ce document ne constitue pas un avis juridique. Pour les décisions ayant des
+implications légales, {org_name} devrait consulter un conseiller juridique
+spécialisé en protection des données et en gouvernance IA.
+
+================================================================================
+APPROBATION ET DISTRIBUTION
+================================================================================
+
+Préparé par    : {assessor_name}
+Date           : {assessed_at}
+Distribution   : [Indiquer les destinataires]
+
+Ce document est CONFIDENTIEL et destiné à usage interne uniquement.
+
+Généré par le Moteur de conformité NIST AI RMF | {org_name} | {date}
+================================================================================

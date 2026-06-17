@@ -1,0 +1,177 @@
+================================================================================
+AI TOOL ACCEPTABLE USE POLICY
+================================================================================
+
+Tool Assessed  : {tool_name} ({vendor})
+Organization   : {org_name}
+Assessment Date: {assessed_at}
+Assessor       : {assessor_name}
+Effective Date : {date}
+Next Review    : {next_review_date}
+
+NIST AI RMF Risk Tier   : {risk_tier_en}
+NIST Compliance Score   : {compliance_pct}%
+Law 25 Compliance Score : {loi25_pct}%
+
+================================================================================
+1. PURPOSE
+================================================================================
+
+This policy establishes acceptable use rules for the AI tool {tool_name},
+provided by {vendor}, within {org_name}. It governs responsible use of this
+tool while ensuring compliance with the NIST AI Risk Management Framework 1.0
+and applicable privacy legislation, including Quebec's Act respecting the
+protection of personal information in the private sector (Law 25 / Bill 64) and
+the Personal Information Protection and Electronic Documents Act (PIPEDA).
+
+================================================================================
+2. SCOPE
+================================================================================
+
+This policy applies to all employees, contractors, interns, and partners of
+{org_name} who access {tool_name}, regardless of their location or work
+arrangement.
+
+================================================================================
+3. TOOL DESCRIPTION
+================================================================================
+
+  Tool    : {tool_name}
+  Vendor  : {vendor}
+  Category: {category}
+
+{tool_name} is an AI tool in the {category} category. Its use may involve
+processing data that includes personal information or confidential organizational
+information.
+
+================================================================================
+4. RISK ASSESSMENT SUMMARY
+================================================================================
+
+Assessment completed on {assessed_at} by {assessor_name}.
+
+  Overall NIST AI RMF Compliance : {compliance_pct}%
+  Law 25 (Quebec) Compliance     : {loi25_pct}%
+  Overall Risk Tier              : {risk_tier_en}
+
+  Scores by NIST Function:
+    GOVERN  — Policies & Accountability     : {govern_pct}%
+    MAP     — Data & Risk Classification    : {map_pct}%
+    MEASURE — Technical Risk Evaluation     : {measure_pct}%
+    MANAGE  — Risk Treatment & Guardrails   : {manage_pct}%
+
+Gaps identified during assessment ({gaps_count} total):
+{gaps_list}
+
+================================================================================
+5. PERMITTED USES
+================================================================================
+
+Employees of {org_name} are authorized to use {tool_name} for:
+
+  a) {category} tasks directly related to their approved job functions;
+  b) Drafting, reviewing, and summarizing non-confidential documents;
+  c) Generating ideas or suggestions, provided a human validates all outputs
+     before any decision-making or external communication;
+  d) Internal technical tasks that do not involve personally identifiable
+     information of customers, employees, or third parties;
+  e) Training and experimentation using fictional or anonymized data.
+
+================================================================================
+6. PROHIBITED USES
+================================================================================
+
+Employees are strictly prohibited from using {tool_name} to:
+
+  a) Process sensitive personal information (health data, financial records,
+     disciplinary or criminal records) without protective controls and a prior
+     Privacy Impact Assessment (PIA);
+  b) Make final decisions about individuals (hiring, credit, service access,
+     performance evaluations) without mandatory human review and a mechanism
+     for the individual to challenge the decision;
+  c) Share trade secrets, protected intellectual property, confidential
+     contracts, or customer data with the system;
+  d) Circumvent internal control, audit, or compliance processes;
+  e) Generate, distribute, or amplify misleading, discriminatory, or harmful
+     content;
+  f) Any use contrary to Law 25 (Quebec), PIPEDA, GDPR where applicable, or
+     any other data protection legislation.
+
+================================================================================
+7. TRANSPARENCY OBLIGATIONS — LAW 25 ART. 12.1 (QUEBEC)
+================================================================================
+
+Pursuant to Article 12.1 of Quebec's Law 25, if {tool_name} is used to make
+decisions based exclusively on automated processing of personal information that
+produces legal or significant effects on an individual, {org_name} must:
+
+  • Inform the individual that their personal information is used for automated
+    decision-making;
+  • Communicate which personal information was used in the decision;
+  • Offer the individual the right to have the decision reviewed by a human;
+  • Allow the individual to present their observations.
+
+Refer to the Automated Decision Disclosure Notice generated separately for the
+required disclosure text.
+
+================================================================================
+8. RESPONSIBILITIES
+================================================================================
+
+Employees:
+  • Use {tool_name} only for the authorized purposes above.
+  • Validate all tool outputs before using them in a decision-making, client-
+    facing, or public context.
+  • Report any incident, unexpected behavior, or data breach to the Privacy
+    Officer within 24 hours.
+
+Managers:
+  • Ensure team members have read this policy and acknowledged it in writing.
+  • Monitor {tool_name} usage within their scope of responsibility.
+
+Privacy Officer:
+  • Maintain an up-to-date registry of approved AI tools and associated
+    compliance assessments.
+  • Coordinate Privacy Impact Assessments (PIAs) as required by Law 25.
+  • Ensure this policy is reviewed by the date indicated above.
+
+================================================================================
+9. DISCIPLINARY CONSEQUENCES
+================================================================================
+
+Violations of this policy may result in disciplinary action up to and including
+termination of employment, as well as civil or criminal liability under
+applicable privacy laws.
+
+================================================================================
+10. REVIEW AND UPDATES
+================================================================================
+
+This policy must be reviewed no later than {next_review_date}, or whenever a
+material change occurs in:
+  • {vendor}'s features or data practices;
+  • Applicable legal requirements (Law 25, PIPEDA);
+  • The NIST AI RMF risk profile for {tool_name}.
+
+================================================================================
+APPROVAL
+================================================================================
+
+Approved by : ________________________________  Date: ________________
+
+Title       : ________________________________
+
+Signature   : ________________________________
+
+================================================================================
+LEGAL NOTICE
+================================================================================
+
+This document was automatically generated from a NIST AI RMF compliance
+assessment. It is a practical starting point and must be reviewed and adapted
+by qualified legal counsel or an AI governance expert before official adoption.
+Consult a privacy lawyer for requirements specific to your industry and
+jurisdiction.
+
+Generated by the NIST AI RMF Compliance Engine | {org_name} | {date}
+================================================================================

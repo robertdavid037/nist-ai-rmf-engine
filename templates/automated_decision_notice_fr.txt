@@ -1,0 +1,160 @@
+================================================================================
+AVIS CONCERNANT LES DÉCISIONS AUTOMATISÉES
+Conformément à l'article 12.1 de la Loi 25 du Québec
+================================================================================
+
+Organisation   : {org_name}
+Outil IA visé  : {tool_name} ({vendor})
+Date           : {date}
+Révisé par     : {assessor_name}
+Score Loi 25   : {loi25_pct}%
+
+================================================================================
+1. OBJET DE CET AVIS
+================================================================================
+
+Conformément à l'article 12.1 de la Loi modernisant des dispositions législatives
+en matière de protection des renseignements personnels (Loi 25, Québec), {org_name}
+vous informe que l'outil d'intelligence artificielle {tool_name}, fourni par
+{vendor}, peut être utilisé pour rendre des décisions ou formuler des
+recommandations fondées sur le traitement automatisé de renseignements personnels.
+
+Cet avis décrit comment {tool_name} est utilisé, quels renseignements personnels
+sont traités, et quels droits vous détenez à cet égard.
+
+================================================================================
+2. DESCRIPTION DU SYSTÈME ET DE SON UTILISATION
+================================================================================
+
+Outil      : {tool_name}
+Fournisseur: {vendor}
+Catégorie  : {category}
+
+{tool_name} est un système d'intelligence artificielle de la catégorie {category}
+utilisé par {org_name} pour [DÉCRIRE ICI L'UTILISATION SPÉCIFIQUE — ex. : analyser
+les interactions clients et formuler des recommandations de service, évaluer les
+demandes de crédit, prioriser les dossiers de support, etc.].
+
+Les décisions ou recommandations produites par ce système peuvent avoir des effets
+significatifs sur les personnes concernées, notamment en matière de [DÉCRIRE ICI
+LES EFFETS — ex. : accès à des services, tarification personnalisée, priorisation
+des communications, etc.].
+
+================================================================================
+3. RENSEIGNEMENTS PERSONNELS UTILISÉS
+================================================================================
+
+Dans le cadre de ce traitement automatisé, {tool_name} peut utiliser les
+catégories de renseignements personnels suivantes :
+
+  • [CATÉGORIE 1 — ex. : Nom, prénom, coordonnées]
+  • [CATÉGORIE 2 — ex. : Historique d'achats ou d'interactions]
+  • [CATÉGORIE 3 — ex. : Préférences et comportements déclarés ou inférés]
+  • [CATÉGORIE 4 — ex. : Données démographiques]
+  • [AJOUTER LES CATÉGORIES PERTINENTES SELON VOS PRATIQUES RÉELLES]
+
+Ces renseignements sont collectés par {org_name} et transmis à {vendor} aux fins
+de traitement. Référez-vous à la politique de confidentialité de {org_name} et
+aux conditions d'utilisation de {vendor} pour les détails sur la conservation,
+la sécurité et le transfert des données.
+
+================================================================================
+4. LOGIQUE ET FONCTIONNEMENT DU SYSTÈME
+================================================================================
+
+{tool_name} utilise des algorithmes d'apprentissage automatique pour analyser
+les renseignements personnels indiqués ci-dessus et [DÉCRIRE ICI LA LOGIQUE —
+ex. : calculer un score de propension, regrouper les profils similaires, générer
+des recommandations personnalisées, identifier des anomalies, etc.].
+
+Le système prend en compte les facteurs suivants pour produire ses résultats :
+  • [FACTEUR 1]
+  • [FACTEUR 2]
+  • [FACTEUR 3]
+
+Note : Les décisions finales ayant des effets significatifs sur votre situation
+sont revues et confirmées par un employé qualifié de {org_name} avant d'être
+communiquées ou mises en oeuvre.
+
+Évaluation de conformité (score Loi 25 : {loi25_pct}%) :
+{gaps_list}
+
+================================================================================
+5. VOS DROITS — ARTICLE 12.1 LOI 25
+================================================================================
+
+Conformément à l'article 12.1 de la Loi 25, vous disposez des droits suivants :
+
+  a) DROIT D'ÊTRE INFORMÉ
+     Vous avez le droit d'être informé du fait que votre demande, votre dossier
+     ou votre situation est ou sera soumis à un traitement automatisé pouvant
+     produire des effets à votre égard.
+
+  b) DROIT À L'EXPLICATION
+     Vous avez le droit de demander et d'obtenir des explications sur les
+     renseignements personnels utilisés pour rendre la décision automatisée
+     vous concernant, ainsi que sur les principaux facteurs et paramètres qui
+     ont influencé la décision.
+
+  c) DROIT À LA RÉVISION HUMAINE
+     Vous avez le droit de demander qu'une personne physique qualifiée de
+     {org_name} revoie toute décision rendue à votre égard sur la base d'un
+     traitement automatisé de vos renseignements personnels.
+
+  d) DROIT DE PRÉSENTER VOS OBSERVATIONS
+     Vous avez le droit de présenter vos observations à {org_name} et d'obtenir
+     que celles-ci soient prises en compte avant qu'une décision finale soit
+     confirmée ou maintenue.
+
+================================================================================
+6. COMMENT EXERCER VOS DROITS
+================================================================================
+
+Pour exercer l'un des droits ci-dessus ou pour toute question concernant le
+traitement automatisé de vos renseignements personnels, veuillez contacter :
+
+  Responsable de la protection des renseignements personnels (RPRP)
+  {org_name}
+
+  Courriel : [COURRIEL DU RPRP]
+  Adresse  : [ADRESSE POSTALE]
+  Téléphone: [NUMÉRO DE TÉLÉPHONE]
+
+{org_name} s'engage à répondre à votre demande dans un délai raisonnable et
+conforme aux exigences de la Loi 25.
+
+================================================================================
+7. RECOURS AUPRÈS DE LA COMMISSION D'ACCÈS À L'INFORMATION
+================================================================================
+
+Si vous estimez que vos droits en matière de protection des renseignements
+personnels n'ont pas été respectés, vous pouvez déposer une plainte auprès de
+la Commission d'accès à l'information du Québec (CAI) :
+
+  Commission d'accès à l'information du Québec
+  Site web : www.cai.gouv.qc.ca
+  Téléphone: 1 888 528-7741
+
+================================================================================
+8. MISE À JOUR DE CET AVIS
+================================================================================
+
+Cet avis sera mis à jour si {org_name} modifie de manière significative la façon
+dont {tool_name} est utilisé pour prendre des décisions automatisées vous
+concernant. La date de la dernière révision est indiquée en en-tête.
+
+Prochaine révision prévue : {next_review_date}
+
+================================================================================
+AVIS LÉGAL
+================================================================================
+
+Cet avis a été préparé à partir d'une évaluation de conformité Loi 25 / NIST
+AI RMF (score Loi 25 : {loi25_pct}%) et constitue un modèle de départ. Il doit
+être revu et complété par un conseiller juridique spécialisé en protection des
+renseignements personnels avant publication officielle. Les sections en crochets
+[...] doivent obligatoirement être complétées avec les informations propres à
+votre organisation et à vos pratiques réelles.
+
+Généré par le Moteur de conformité NIST AI RMF | {org_name} | {date}
+================================================================================
