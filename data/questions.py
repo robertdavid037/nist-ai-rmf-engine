@@ -9,6 +9,9 @@ QUESTIONS = [
         "text": "Does your organization have a written policy defining acceptable use of this AI tool?",
         "why": "Without a written policy, employees have no clear boundaries — increasing the chance of misuse or data exposure.",
         "fix": "Draft a 1-page AI Acceptable Use Policy — define what data employees may and may not share with AI tools. Free templates are available from SANS and NIST.",
+        "text_fr": "Votre organisation dispose-t-elle d'une politique écrite définissant l'utilisation acceptable de cet outil IA ?",
+        "why_fr": "Sans politique écrite, les employés n'ont pas de limites claires — ce qui augmente le risque d'abus ou de divulgation de données.",
+        "fix_fr": "Rédigez une politique d'utilisation acceptable de l'IA d'une page — définissez quelles données les employés peuvent ou non partager avec des outils IA. Des modèles gratuits sont disponibles auprès du SANS et du NIST.",
     },
     {
         "id": 2,
@@ -19,6 +22,9 @@ QUESTIONS = [
         "text": "Is there a designated person responsible for overseeing AI usage and compliance?",
         "why": "AI governance without an owner means no one is accountable when something goes wrong.",
         "fix": "Designate a named AI owner — a specific person responsible for approving AI tool usage and reviewing compliance on a quarterly basis.",
+        "text_fr": "Une personne désignée est-elle responsable de la supervision de l'utilisation de l'IA et de la conformité ?",
+        "why_fr": "Une gouvernance IA sans responsable signifie que personne n'est imputable en cas de problème.",
+        "fix_fr": "Désignez un responsable IA nommé — une personne spécifique chargée d'approuver l'utilisation des outils IA et de réviser la conformité chaque trimestre.",
     },
     {
         "id": 3,
@@ -29,6 +35,9 @@ QUESTIONS = [
         "text": "Have employees using this AI tool received training on data handling and appropriate use?",
         "why": "Untrained employees are the most common source of accidental data leaks through AI tools.",
         "fix": "Run a 30-minute staff briefing on safe AI use — cover what data must never be entered into AI tools, why it matters, and what to do if something goes wrong.",
+        "text_fr": "Les employés utilisant cet outil IA ont-ils reçu une formation sur la gestion des données et l'utilisation appropriée ?",
+        "why_fr": "Les employés non formés sont la source la plus courante de fuites de données accidentelles via des outils IA.",
+        "fix_fr": "Organisez une séance de formation de 30 minutes sur l'utilisation sécuritaire de l'IA — abordez quelles données ne doivent jamais être saisies dans des outils IA, pourquoi cela importe, et que faire en cas de problème.",
     },
     {
         "id": 4,
@@ -39,6 +48,9 @@ QUESTIONS = [
         "text": "Does your organization maintain an inventory of all AI tools currently in use?",
         "why": "You can't manage risk for tools you don't know exist. Shadow AI is a real threat.",
         "fix": "Build an AI tool inventory: a simple spreadsheet listing every AI tool in use, who uses it, what data it can access, and when it was last reviewed. Review it quarterly.",
+        "text_fr": "Votre organisation tient-elle un inventaire de tous les outils IA actuellement utilisés ?",
+        "why_fr": "On ne peut pas gérer les risques liés à des outils dont on ignore l'existence. L'IA fantôme est une véritable menace.",
+        "fix_fr": "Créez un inventaire des outils IA : un simple tableur listant chaque outil IA en usage, qui l'utilise, à quelles données il peut accéder, et quand il a été examiné pour la dernière fois. Révisez-le chaque trimestre.",
     },
 
     # ── MAP ─────────────────────────────────────────────────────────────────
@@ -51,6 +63,9 @@ QUESTIONS = [
         "text": "Are data protection measures in place for any personal customer data this AI accesses?",
         "why": "Personal data processed by AI without controls creates GDPR/PIPEDA/CCPA liability.",
         "fix": "Audit what personal or customer data this AI tool can access — restrict it to only what is strictly necessary for its function and document the decision.",
+        "text_fr": "Des mesures de protection des données sont-elles en place pour les données personnelles de clients auxquelles cette IA accède ?",
+        "why_fr": "Les données personnelles traitées par l'IA sans contrôles créent une responsabilité en vertu de la Loi 25 du Québec, du RGPD et de la LPRPDE.",
+        "fix_fr": "Vérifiez à quelles données personnelles ou client cet outil IA peut accéder — limitez-le au strict minimum nécessaire à sa fonction et documentez la décision.",
     },
     {
         "id": 6,
@@ -61,6 +76,9 @@ QUESTIONS = [
         "text": "Are access restrictions in place limiting what confidential business data this AI can reach?",
         "why": "Unrestricted AI access to financials, contracts, or IP is a major data leakage risk.",
         "fix": "Restrict this AI tool's access to confidential data — financials, contracts, and IP should require explicit approval to reach, with access logged.",
+        "text_fr": "Des restrictions d'accès sont-elles en place pour limiter les données confidentielles auxquelles cette IA peut accéder ?",
+        "why_fr": "Un accès IA non restreint aux données financières, aux contrats ou à la propriété intellectuelle représente un risque majeur de fuite de données.",
+        "fix_fr": "Restreignez l'accès de cet outil IA aux données confidentielles — les données financières, les contrats et la propriété intellectuelle doivent nécessiter une approbation explicite et être journalisés.",
     },
     {
         "id": 7,
@@ -71,6 +89,9 @@ QUESTIONS = [
         "text": "Have all third-party API connections used by this AI tool been reviewed and approved for security compliance?",
         "why": "Third-party APIs can exfiltrate your data or introduce compromised model behavior.",
         "fix": "Document all third-party API connections this tool uses and confirm each provider's data handling and security practices in writing — check their security page or request a SOC 2 report.",
+        "text_fr": "Toutes les connexions d'API tierces utilisées par cet outil IA ont-elles été examinées et approuvées pour la conformité sécurité ?",
+        "why_fr": "Les API tierces peuvent exfiltrer vos données ou introduire des comportements compromis dans le modèle.",
+        "fix_fr": "Documentez toutes les connexions API tierces utilisées par cet outil et confirmez par écrit les pratiques de traitement des données et de sécurité de chaque fournisseur — consultez leur page sécurité ou demandez un rapport SOC 2.",
     },
     {
         "id": 8,
@@ -81,6 +102,9 @@ QUESTIONS = [
         "text": "Are user inputs filtered or validated before being sent to this AI?",
         "why": "Unfiltered inputs are the primary attack vector for prompt injection — the #1 LLM vulnerability.",
         "fix": "Add input validation to block sensitive data patterns — email addresses, IDs, financial figures — from being submitted to this AI. Start with a deny-list of data types that should never leave your systems.",
+        "text_fr": "Les entrées des utilisateurs sont-elles filtrées ou validées avant d'être envoyées à cette IA ?",
+        "why_fr": "Les entrées non filtrées sont le principal vecteur d'attaque pour l'injection de prompt — la vulnérabilité LLM n° 1.",
+        "fix_fr": "Ajoutez une validation des entrées pour bloquer les modèles de données sensibles — adresses courriel, identifiants, données financières — avant leur soumission à cette IA. Commencez par une liste de refus des types de données qui ne doivent jamais quitter vos systèmes.",
     },
 
     # ── MEASURE ─────────────────────────────────────────────────────────────
@@ -93,6 +117,9 @@ QUESTIONS = [
         "text": "Are measures in place to detect and prevent prompt manipulation of this AI?",
         "why": "Without prompt injection defenses, attackers can override the AI's instructions entirely.",
         "fix": "Enable prompt injection protections: separate system instructions from user input, validate that users cannot override system behaviour, and monitor for unusual instruction patterns in logs.",
+        "text_fr": "Des mesures sont-elles en place pour détecter et prévenir la manipulation des prompts de cette IA ?",
+        "why_fr": "Sans défenses contre l'injection de prompt, les attaquants peuvent remplacer entièrement les instructions de l'IA.",
+        "fix_fr": "Activez les protections contre l'injection de prompt : séparez les instructions système des entrées utilisateur, vérifiez que les utilisateurs ne peuvent pas remplacer le comportement du système, et surveillez les modèles d'instructions inhabituels dans les journaux.",
     },
     {
         "id": 10,
@@ -103,6 +130,9 @@ QUESTIONS = [
         "text": "Are output controls in place to prevent sensitive data from appearing in AI responses?",
         "why": "AI models can inadvertently reproduce training data or context window contents in responses.",
         "fix": "Configure output filters to automatically detect and redact sensitive data patterns before AI responses are displayed or stored. Test by querying the AI for data it should not reveal.",
+        "text_fr": "Des contrôles de sortie sont-ils en place pour empêcher l'apparition de données sensibles dans les réponses de l'IA ?",
+        "why_fr": "Les modèles IA peuvent reproduire par inadvertance des données d'entraînement ou le contenu de la fenêtre contextuelle dans leurs réponses.",
+        "fix_fr": "Configurez des filtres de sortie pour détecter et caviarder automatiquement les modèles de données sensibles avant que les réponses IA ne soient affichées ou stockées. Testez en interrogeant l'IA sur des données qu'elle ne devrait pas révéler.",
     },
     {
         "id": 11,
@@ -113,6 +143,9 @@ QUESTIONS = [
         "text": "Do humans review AI outputs before they trigger automated business decisions?",
         "why": "Fully automated AI decisions without human oversight create legal and operational liability.",
         "fix": "Require human sign-off before any AI output triggers an automated business action or is sent directly to a customer. Document this as a policy and include it in employee training.",
+        "text_fr": "Les humains examinent-ils les sorties de l'IA avant qu'elles ne déclenchent des décisions commerciales automatisées ?",
+        "why_fr": "Les décisions IA entièrement automatisées sans supervision humaine créent une responsabilité légale et opérationnelle.",
+        "fix_fr": "Exigez une approbation humaine avant que toute sortie IA ne déclenche une action commerciale automatisée ou soit envoyée directement à un client. Documentez cela comme politique et intégrez-le à la formation des employés.",
     },
     {
         "id": 12,
@@ -123,6 +156,9 @@ QUESTIONS = [
         "text": "Are this AI's outputs validated or filtered before being shown to customers?",
         "why": "Unvalidated AI outputs can contain harmful, false, or confidential content reaching end users.",
         "fix": "Add a review checkpoint before AI-generated content reaches customers — either a human approval step or an automated content filter configured to flag harmful or confidential output.",
+        "text_fr": "Les sorties de cette IA sont-elles validées ou filtrées avant d'être présentées aux clients ?",
+        "why_fr": "Les sorties IA non validées peuvent contenir des contenus nuisibles, faux ou confidentiels atteignant les utilisateurs finaux.",
+        "fix_fr": "Ajoutez un point de révision avant que le contenu généré par IA n'atteigne les clients — soit une étape d'approbation humaine, soit un filtre de contenu automatisé configuré pour signaler les sorties nuisibles ou confidentielles.",
     },
     {
         "id": 13,
@@ -133,6 +169,9 @@ QUESTIONS = [
         "text": "Have all third-party data sources and training data been reviewed for integrity and security?",
         "why": "Poisoned training data or unvetted external sources can corrupt AI behavior at scale.",
         "fix": "Document all external data sources and training data this tool relies on — confirm data provenance, integrity, and vendor security practices. Request data lineage documentation from your vendor.",
+        "text_fr": "Toutes les sources de données tierces et les données d'entraînement ont-elles été examinées pour leur intégrité et leur sécurité ?",
+        "why_fr": "Des données d'entraînement empoisonnées ou des sources externes non vérifiées peuvent corrompre le comportement de l'IA à grande échelle.",
+        "fix_fr": "Documentez toutes les sources de données externes et données d'entraînement sur lesquelles cet outil s'appuie — confirmez la provenance, l'intégrité et les pratiques de sécurité du fournisseur. Demandez la documentation de la traçabilité des données à votre fournisseur.",
     },
     {
         "id": 14,
@@ -143,6 +182,9 @@ QUESTIONS = [
         "text": "Has this AI tool been formally evaluated for accuracy, hallucinations, or bias risks?",
         "why": "AI tools that hallucinate or produce biased outputs create reputational and legal risk.",
         "fix": "Run a structured accuracy review: test 20 representative queries, document the error rate and any patterns of bias or hallucination, and set a threshold for acceptable performance.",
+        "text_fr": "Cet outil IA a-t-il été formellement évalué pour sa précision, ses hallucinations ou ses risques de biais ?",
+        "why_fr": "Les outils IA qui hallucinent ou produisent des sorties biaisées créent des risques réputationnels et juridiques.",
+        "fix_fr": "Effectuez une révision structurée de la précision : testez 20 requêtes représentatives, documentez le taux d'erreur et tout modèle de biais ou d'hallucination, et fixez un seuil de performance acceptable.",
     },
 
     # ── MANAGE ──────────────────────────────────────────────────────────────
@@ -155,6 +197,9 @@ QUESTIONS = [
         "text": "Is there an audit log recording inputs and outputs from this AI tool?",
         "why": "Without logs, you cannot investigate incidents, demonstrate compliance, or detect misuse.",
         "fix": "Enable audit logging for all inputs sent to and outputs received from this AI tool. Retain logs for a minimum of 90 days and assign a named owner to review them monthly.",
+        "text_fr": "Existe-t-il un journal d'audit enregistrant les entrées et sorties de cet outil IA ?",
+        "why_fr": "Sans journaux, il est impossible d'enquêter sur les incidents, de démontrer la conformité ou de détecter les abus.",
+        "fix_fr": "Activez la journalisation d'audit pour toutes les entrées envoyées à et les sorties reçues de cet outil IA. Conservez les journaux pendant au minimum 90 jours et assignez un responsable nommé pour les examiner mensuellement.",
     },
     {
         "id": 16,
@@ -165,6 +210,9 @@ QUESTIONS = [
         "text": "Do you have a process to disable or isolate this AI tool quickly in a security incident?",
         "why": "A tool you cannot shut down quickly amplifies the damage of any security breach.",
         "fix": "Write a 3-step AI incident response procedure: who makes the call to shut it down, how to disable it, and who gets notified within the hour. Test it once per quarter.",
+        "text_fr": "Disposez-vous d'un processus pour désactiver ou isoler rapidement cet outil IA en cas d'incident de sécurité ?",
+        "why_fr": "Un outil que vous ne pouvez pas fermer rapidement amplifie les dommages de toute violation de sécurité.",
+        "fix_fr": "Rédigez une procédure d'intervention sur incident IA en 3 étapes : qui décide de l'arrêter, comment le désactiver, et qui est notifié dans l'heure. Testez-la une fois par trimestre.",
     },
     {
         "id": 17,
@@ -175,6 +223,9 @@ QUESTIONS = [
         "text": "Are input/output filters or guardrails in place to block harmful or non-compliant content?",
         "why": "Guardrails are the primary technical defense against harmful AI outputs reaching users.",
         "fix": "Activate the tool's built-in content filters, or implement a middleware layer to block harmful, confidential, or non-compliant inputs and outputs. Document what the guardrails cover and test them.",
+        "text_fr": "Des filtres d'entrée/sortie ou des garde-fous sont-ils en place pour bloquer les contenus nuisibles ou non conformes ?",
+        "why_fr": "Les garde-fous constituent la principale défense technique contre les sorties IA nuisibles atteignant les utilisateurs.",
+        "fix_fr": "Activez les filtres de contenu intégrés à l'outil, ou implémentez une couche intermédiaire pour bloquer les entrées et sorties nuisibles, confidentielles ou non conformes. Documentez ce que couvrent les garde-fous et testez-les.",
     },
     {
         "id": 18,
@@ -185,12 +236,15 @@ QUESTIONS = [
         "text": "Is this AI tool reviewed periodically for compliance, performance, and data handling practices?",
         "why": "AI tools drift over time — without periodic reviews, risks accumulate silently.",
         "fix": "Schedule a quarterly AI compliance review now — block the time, assign an owner, and use this report as the baseline. Set a calendar reminder 2 weeks before each review date.",
+        "text_fr": "Cet outil IA est-il examiné périodiquement pour sa conformité, ses performances et ses pratiques de traitement des données ?",
+        "why_fr": "Les outils IA évoluent dans le temps — sans révisions périodiques, les risques s'accumulent en silence.",
+        "fix_fr": "Planifiez dès maintenant une révision trimestrielle de la conformité IA — bloquez le temps, assignez un responsable, et utilisez ce rapport comme base de référence. Configurez un rappel calendrier 2 semaines avant chaque date de révision.",
     },
 ]
 
 # Scoring logic:
 # Yes = compliant = 0 risk points added
-# No  = non-compliant = Likelihood × Impact risk score added
+# No  = non-compliant = default_risk score added
 # Higher total risk score = lower compliance %
 
 RISK_TIERS = [

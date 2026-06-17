@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from database.db import init_db, get_connection
 from sidebar import render_sidebar
+from translations import t
 
 st.set_page_config(
     page_title="AI Security Posture Dashboard",
@@ -48,21 +49,19 @@ TIER_EMOJI = {
 # ── Top bar ───────────────────────────────────────────────────────────────────
 col_title, col_btn = st.columns([5, 1])
 with col_title:
-    st.title("🛡️ AI Security Posture Dashboard")
+    st.title(f"🛡️ {t('dashboard_title')}")
     st.caption("NIST AI Risk Management Framework 1.0")
 with col_btn:
     st.write("")
-    if st.button("＋ New Assessment", type="primary", use_container_width=True):
+    if st.button(t("btn_new_assessment"), type="primary", use_container_width=True):
         st.switch_page("pages/1_Assessment.py")
 
 st.divider()
 
 # ── Sort controls ─────────────────────────────────────────────────────────────
-sort_by = st.radio(
-    "Sort by:",
-    ["Risk (Highest First)", "Compliance (Highest First)", "Date (Most Recent)"],
-    horizontal=True,
-)
+sort_options = [t("sort_risk"), t("sort_compliance"), t("sort_date")]
+sort_by = st.radio(t("sort_by"), sort_options, horizontal=True)
+sort_idx = sort_options.index(sort_by)
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 conn = get_connection()
@@ -84,25 +83,26 @@ conn.close()
 tools = [dict(r) for r in rows]
 
 # Apply sort
-if sort_by == "Risk (Highest First)":
+if sort_idx == 0:
     tools.sort(key=lambda x: x["compliance_pct"])
-elif sort_by == "Compliance (Highest First)":
+elif sort_idx == 1:
     tools.sort(key=lambda x: x["compliance_pct"], reverse=True)
 else:
     tools.sort(key=lambda x: x["assessed_at"], reverse=True)
 
 # ── Cards ─────────────────────────────────────────────────────────────────────
 if not tools:
-    st.info("No assessments yet. Click **＋ New Assessment** to get started.")
+    st.info(t("no_assessments"))
 else:
-    st.caption(f"{len(tools)} tool{'s' if len(tools) != 1 else ''} assessed")
+    st.caption(f"{len(tools)} {t('tools_assessed')}")
     cols = st.columns(3)
 
     for i, tool in enumerate(tools):
-        tier = tool["risk_tier"]
+        tier  = tool["risk_tier"]
         color = TIER_BG.get(tier, "#888")
         emoji = TIER_EMOJI.get(tier, "")
-        pct = tool["compliance_pct"]
+        pct   = tool["compliance_pct"]
+        tier_display = t(f"tier_{tier}")
 
         with cols[i % 3]:
             with st.container(border=True):
@@ -110,19 +110,20 @@ else:
                 st.caption(f"{tool['vendor']} · {tool['category']}")
 
                 st.markdown(
-                    f"<div class='tier-badge' style='background:{color}'>{emoji} {tier} Risk</div>",
+                    f"<div class='tier-badge' style='background:{color}'>"
+                    f"{emoji} {tier_display} {t('risk')}</div>",
                     unsafe_allow_html=True,
                 )
 
-                st.metric("Compliance", f"{pct}%")
+                st.metric(t("compliance"), f"{pct}%")
                 st.progress(pct / 100)
 
                 assessed = tool["assessed_at"][:10]
                 next_rev = tool["next_review_date"]
-                st.caption(f"Assessed {assessed} · Review due {next_rev}")
+                st.caption(f"{t('assessed')} {assessed} · {t('review_due')} {next_rev}")
 
                 if st.button(
-                    "View Full Report →",
+                    t("btn_view_report"),
                     key=f"view_{tool['assessment_id']}",
                     use_container_width=True,
                 ):

@@ -1,5 +1,6 @@
 from fpdf import FPDF
 from verdict import get_verdict
+from translations import TRANSLATIONS
 
 TIER_COLORS_RGB = {
     "Minimal":      (39, 174, 96),
@@ -12,12 +13,33 @@ LM = 10   # left margin
 W  = 190  # content width (A4 210mm - 10mm each side)
 
 
+def _T(key, lang="fr"):
+    """Translate a key without needing Streamlit session_state."""
+    return TRANSLATIONS[lang].get(key, TRANSLATIONS["en"].get(key, key))
+
+
 def _s(text):
     """Replace non-latin-1 characters so Helvetica can encode them."""
     return (text or "").replace("—", "-").replace("–", "-") \
                        .replace("‘", "'").replace("’", "'") \
                        .replace("“", '"').replace("”", '"') \
-                       .replace("→", "->")
+                       .replace("→", "->").replace("·", "-") \
+                       .replace("é", "e").replace("è", "e") \
+                       .replace("ê", "e").replace("ë", "e") \
+                       .replace("à", "a").replace("â", "a") \
+                       .replace("ç", "c").replace("î", "i") \
+                       .replace("ô", "o").replace("ù", "u") \
+                       .replace("û", "u").replace("ü", "u") \
+                       .replace("é".upper(), "E").replace("À", "A") \
+                       .replace("É", "E").replace("Ç", "C")
+
+
+def _qt(question, field, lang):
+    """Return translated question field, falling back to English."""
+    fr_field = field + "_fr"
+    if lang == "fr" and fr_field in question and question[fr_field]:
+        return question[fr_field]
+    return question.get(field, "")
 
 
 def _bar(pdf, x, y, w, h, pct):
@@ -37,8 +59,8 @@ def _bar(pdf, x, y, w, h, pct):
         pdf.rect(x, y, fill_w, h, "F")
 
 
-def generate_pdf(assessment, tool, responses, questions_by_id):
-    """Return bytes of a restructured PDF compliance report."""
+def generate_pdf(assessment, tool, responses, questions_by_id, lang="fr"):
+    """Return bytes of a PDF compliance report in the requested language."""
     pdf = FPDF()
     pdf.set_margins(LM, 10, LM)
     pdf.set_auto_page_break(auto=True, margin=20)
@@ -53,10 +75,10 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
     pdf.set_text_color(255, 255, 255)
     pdf.set_font("Helvetica", "B", 15)
     pdf.set_xy(LM, 5)
-    pdf.cell(W, 8, "NIST AI RMF Compliance Report")
+    pdf.cell(W, 8, _s(_T("pdf_title", lang)))
     pdf.set_font("Helvetica", "", 9)
     pdf.set_xy(LM, 16)
-    pdf.cell(W, 6, f"CONFIDENTIAL  |  Generated {assessment['assessed_at'][:10]}")
+    pdf.cell(W, 6, _s(f"{_T('pdf_confidential', lang)} {assessment['assessed_at'][:10]}"))
 
     # ── Tool identity ─────────────────────────────────────────────────────────
     pdf.set_text_color(0, 0, 0)
@@ -67,30 +89,27 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
     pdf.set_x(LM)
     pdf.cell(W, 6, _s(f"{tool['vendor']} / {tool['category']}"), ln=True)
     pdf.set_x(LM)
-    pdf.cell(W, 6, _s(f"Assessor: {assessment['assessor_name']}"), ln=True)
+    pdf.cell(W, 6, _s(f"{_T('pdf_assessor', lang)} {assessment['assessor_name']}"), ln=True)
     pdf.set_x(LM)
-    pdf.cell(W, 6, f"Date: {assessment['assessed_at'][:10]}  |  Next Review: {assessment['next_review_date']}", ln=True)
+    pdf.cell(W, 6, _s(
+        f"{_T('pdf_date', lang)} {assessment['assessed_at'][:10]}  |  "
+        f"{_T('pdf_next_review_lbl', lang)} {assessment['next_review_date']}"
+    ), ln=True)
 
-    # ── Plain-English verdict block ───────────────────────────────────────────
+    # ── Plain-English / French verdict block ──────────────────────────────────
     pdf.ln(4)
-    verdict_text = _s(get_verdict(assessment, tool))
+    verdict_text = _s(get_verdict(assessment, tool, lang=lang))
 
-    # Light grey background box
     verdict_y = pdf.get_y()
-    pdf.set_fill_color(245, 245, 245)
-    # Draw box first (estimate height), then write text on top
-    pdf.set_draw_color(*tier_rgb)
-    # Left accent bar
     pdf.set_fill_color(*tier_rgb)
     pdf.rect(LM, verdict_y, 3, 28, "F")
-    # Grey background
     pdf.set_fill_color(248, 249, 250)
     pdf.rect(LM + 3, verdict_y, W - 3, 28, "F")
 
     pdf.set_xy(LM + 7, verdict_y + 4)
     pdf.set_font("Helvetica", "B", 10)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(W - 7, 6, "Executive Summary", ln=True)
+    pdf.cell(W - 7, 6, _s(_T("pdf_exec_summary", lang)), ln=True)
     pdf.set_x(LM + 7)
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(44, 62, 80)
@@ -107,31 +126,43 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
     pdf.set_xy(LM + 4, block_y + 2)
     pdf.cell(34, 14, f"{assessment['compliance_pct']}%")
 
+    tier_display = _s(_T(f"tier_{tier}", lang)).upper()
     pdf.set_font("Helvetica", "B", 13)
     pdf.set_xy(LM + 42, block_y + 3)
-    pdf.cell(100, 7, f"{tier.upper()} RISK")
+    pdf.cell(100, 7, _s(f"{tier_display} {_T('risk', lang).upper()}"))
 
     pdf.set_font("Helvetica", "", 9)
     pdf.set_xy(LM + 42, block_y + 11)
-    pdf.cell(100, 6, f"Risk Score: {assessment['total_risk_score']} / {assessment['max_possible_score']}")
+    pdf.cell(100, 6, _s(
+        f"{_T('pdf_risk_label', lang)} {assessment['total_risk_score']} / {assessment['max_possible_score']}"
+    ))
 
     # ── NIST function breakdown ───────────────────────────────────────────────
     pdf.set_text_color(0, 0, 0)
     pdf.set_xy(LM, block_y + 28)
     pdf.set_font("Helvetica", "B", 11)
-    pdf.cell(W, 7, "Compliance by NIST Function", ln=True)
+    pdf.cell(W, 7, _s(_T("pdf_compliance_fn", lang)), ln=True)
 
-    functions = [
-        ("GOVERN - Policies & Accountability",  assessment["govern_pct"]),
-        ("MAP - Data & Risk Classification",     assessment["map_pct"]),
-        ("MEASURE - Technical Risk Evaluation",  assessment["measure_pct"]),
-        ("MANAGE - Risk Treatment & Guardrails", assessment["manage_pct"]),
-    ]
+    if lang == "fr":
+        functions = [
+            ("GOVERN - Politiques & responsabilisation",  assessment["govern_pct"]),
+            ("MAP - Classification des donnees & risques", assessment["map_pct"]),
+            ("MEASURE - Evaluation technique des risques", assessment["measure_pct"]),
+            ("MANAGE - Traitement des risques & garde-fous", assessment["manage_pct"]),
+        ]
+    else:
+        functions = [
+            ("GOVERN - Policies & Accountability",  assessment["govern_pct"]),
+            ("MAP - Data & Risk Classification",     assessment["map_pct"]),
+            ("MEASURE - Technical Risk Evaluation",  assessment["measure_pct"]),
+            ("MANAGE - Risk Treatment & Guardrails", assessment["manage_pct"]),
+        ]
+
     for fname, fpct in functions:
         row_y = pdf.get_y()
         pdf.set_x(LM)
         pdf.set_font("Helvetica", "", 10)
-        pdf.cell(75, 7, fname)
+        pdf.cell(75, 7, _s(fname))
         pdf.cell(12, 7, f"{fpct}%")
         _bar(pdf, 100, row_y + 1.5, 100, 4, fpct)
         pdf.ln(8)
@@ -145,18 +176,18 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
         pdf.set_x(LM)
         pdf.set_font("Helvetica", "B", 11)
         pdf.set_text_color(0, 0, 0)
-        pdf.cell(W, 7, "Top 3 Priority Actions", ln=True)
+        pdf.cell(W, 7, _s(_T("pdf_top3", lang)), ln=True)
         pdf.set_x(LM)
         pdf.set_font("Helvetica", "", 8)
         pdf.set_text_color(100, 100, 100)
-        pdf.cell(W, 5, "Fix these first - highest risk, biggest compliance impact.", ln=True)
+        pdf.cell(W, 5, _s(_T("pdf_top3_sub", lang)), ln=True)
         pdf.ln(2)
 
         for i, r in enumerate(no_responses[:3], 1):
-            q        = questions_by_id.get(r["question_id"], {})
-            q_text   = _s(q.get("text", f"Question {r['question_id']}"))
-            q_fix    = _s(q.get("fix", ""))
-            risk     = r["risk_score"]
+            q       = questions_by_id.get(r["question_id"], {})
+            q_text  = _s(_qt(q, "text", lang)) if q else f"Question {r['question_id']}"
+            q_fix   = _s(_qt(q, "fix",  lang)) if q else ""
+            risk    = r["risk_score"]
 
             if risk >= 16:
                 badge_rgb = (231, 76, 60)
@@ -174,7 +205,7 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
             pdf.set_xy(LM + 7, action_y + 2)
             pdf.set_font("Helvetica", "B", 10)
             pdf.set_text_color(0, 0, 0)
-            pdf.multi_cell(W - 30, 5, f"{i}. {q_text}  [Risk: {risk}]")
+            pdf.multi_cell(W - 30, 5, f"{i}. {q_text}  [{_T('pdf_risk_label', lang)} {risk}]")
 
             pdf.set_x(LM + 7)
             pdf.set_font("Helvetica", "I", 9)
@@ -184,30 +215,30 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
             pdf.set_text_color(0, 0, 0)
             pdf.ln(3)
 
-    # ── Full priority fix list ────────────────────────────────────────────────
+    # ── Full gap analysis ─────────────────────────────────────────────────────
     pdf.ln(4)
     pdf.set_x(LM)
     pdf.set_font("Helvetica", "B", 11)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(W, 7, "Full Gap Analysis", ln=True)
+    pdf.cell(W, 7, _s(_T("pdf_full_gaps", lang)), ln=True)
 
     if not no_responses:
         pdf.set_x(LM)
         pdf.set_font("Helvetica", "I", 10)
-        pdf.cell(W, 7, "No gaps found - fully compliant!", ln=True)
+        pdf.cell(W, 7, _s(_T("pdf_no_gaps", lang)), ln=True)
     else:
         for i, r in enumerate(no_responses, 1):
             q        = questions_by_id.get(r["question_id"], {})
-            q_text   = _s(q.get("text",    f"Question {r['question_id']}"))
-            q_why    = _s(q.get("why",     ""))
-            q_fix    = _s(q.get("fix",     ""))
-            nist_ref = _s(q.get("nist_ref",  ""))
-            owasp_ref= _s(q.get("owasp_ref", "") or "")
+            q_text   = _s(_qt(q, "text", lang)) if q else f"Question {r['question_id']}"
+            q_why    = _s(_qt(q, "why",  lang)) if q else ""
+            q_fix    = _s(_qt(q, "fix",  lang)) if q else ""
+            nist_ref = _s(q.get("nist_ref",  "")) if q else ""
+            owasp_ref= _s(q.get("owasp_ref", "") or "") if q else ""
 
             pdf.set_x(LM)
             pdf.set_font("Helvetica", "B", 10)
             pdf.set_text_color(0, 0, 0)
-            pdf.multi_cell(W, 5, f"{i}. {q_text}  [Risk: {r['risk_score']}]")
+            pdf.multi_cell(W, 5, f"{i}. {q_text}  [{_T('pdf_risk_label', lang)} {r['risk_score']}]")
 
             pdf.set_x(LM)
             pdf.set_font("Helvetica", "I", 9)
@@ -222,11 +253,11 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
             refs = f"   {nist_ref}"
             if owasp_ref:
                 refs += f"  /  {owasp_ref}"
-            refs += f"  /  Risk Score: {r['risk_score']}"
+            refs += f"  /  {_T('pdf_risk_label', lang)} {r['risk_score']}"
             pdf.set_x(LM)
             pdf.set_font("Helvetica", "", 8)
             pdf.set_text_color(60, 80, 160)
-            pdf.multi_cell(W, 5, refs)
+            pdf.multi_cell(W, 5, _s(refs))
 
             pdf.set_text_color(0, 0, 0)
             pdf.ln(3)
@@ -236,6 +267,6 @@ def generate_pdf(assessment, tool, responses, questions_by_id):
     pdf.set_x(LM)
     pdf.set_font("Helvetica", "I", 8)
     pdf.set_text_color(150, 150, 150)
-    pdf.cell(W, 6, "Generated by NIST AI RMF Compliance Engine  |  Confidential", align="C")
+    pdf.cell(W, 6, _s(_T("pdf_footer", lang)), align="C")
 
     return bytes(pdf.output())

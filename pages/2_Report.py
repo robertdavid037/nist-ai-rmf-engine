@@ -9,6 +9,7 @@ from data.questions import QUESTIONS
 from pdf_export import generate_pdf
 from sidebar import render_sidebar
 from verdict import get_verdict
+from translations import t, qt
 
 st.set_page_config(
     page_title="Compliance Report — NIST AI RMF",
@@ -20,6 +21,8 @@ st.set_page_config(
 st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_allow_html=True)
 
 render_sidebar()
+
+lang = st.session_state.get("lang", "fr")
 
 TIER_BG = {
     "Minimal":      "#27ae60",
@@ -33,18 +36,12 @@ TIER_EMOJI = {
     "High":         "🔴",
     "Unacceptable": "⛔",
 }
-FUNCTION_LABELS = {
-    "govern_pct":  "🏛️ GOVERN — Policies & Accountability",
-    "map_pct":     "🗺️ MAP — Data & Risk Classification",
-    "measure_pct": "📊 MEASURE — Technical Risk Evaluation",
-    "manage_pct":  "🛠️ MANAGE — Risk Treatment & Guardrails",
-}
 
 # ── Guard: need a selected assessment ─────────────────────────────────────────
 assessment_id = st.session_state.get("selected_assessment_id")
 if not assessment_id:
-    st.warning("No report selected. Please open a report from the dashboard.")
-    if st.button("← Back to Dashboard"):
+    st.warning(t("no_report_warning"))
+    if st.button(t("btn_back_dashboard")):
         st.switch_page("app.py")
     st.stop()
 
@@ -77,16 +74,16 @@ col_back, col_pdf = st.columns([5, 1])
 with col_back:
     source = st.session_state.get("report_source", "dashboard")
     if source == "insights":
-        if st.button("← Back to Insights"):
+        if st.button(t("btn_back_insights")):
             st.switch_page("pages/3_Insights.py")
     else:
-        if st.button("← Back to Dashboard"):
+        if st.button(t("btn_back_dashboard")):
             st.switch_page("app.py")
 with col_pdf:
-    pdf_bytes = bytes(generate_pdf(assessment, tool, responses, questions_by_id))
+    pdf_bytes = bytes(generate_pdf(assessment, tool, responses, questions_by_id, lang=lang))
     file_name = f"NIST_RMF_{tool['name'].replace(' ', '_')}_{assessment['assessed_at'][:10]}.pdf"
     st.download_button(
-        "⬇ Download PDF",
+        t("btn_download_pdf"),
         data=pdf_bytes,
         file_name=file_name,
         mime="application/pdf",
@@ -98,18 +95,19 @@ with col_pdf:
 st.markdown(f"# {tool['name']}")
 st.caption(
     f"{tool['vendor']} · {tool['category']} "
-    f"| Assessed {assessment['assessed_at'][:10]} by {assessment['assessor_name']} "
-    f"| Next review {assessment['next_review_date']}"
+    f"| {t('assessed')} {assessment['assessed_at'][:10]} · {assessment['assessor_name']} "
+    f"| {t('review_due')} {assessment['next_review_date']}"
 )
+tier_display = t(f"tier_{tier}")
 st.markdown(
     f"<div style='display:inline-block; background:{color}; color:white; "
     f"padding:6px 20px; border-radius:20px; font-size:15px; font-weight:700; "
-    f"margin-bottom:16px'>{emoji} {tier} Risk</div>",
+    f"margin-bottom:16px'>{emoji} {tier_display} {t('risk')}</div>",
     unsafe_allow_html=True,
 )
 
 # ── Plain-English verdict ─────────────────────────────────────────────────────
-verdict_text = get_verdict(assessment, tool)
+verdict_text = get_verdict(assessment, tool, lang=lang)
 st.markdown(
     f"<div style='background:#f8f9fa; border-left:4px solid {color}; "
     f"padding:16px 20px; border-radius:4px; margin-bottom:16px; "
@@ -120,15 +118,22 @@ st.markdown(
 # ── Overall score ─────────────────────────────────────────────────────────────
 col_pct, col_score, col_spacer = st.columns([1, 1, 3])
 with col_pct:
-    st.metric("Overall Compliance", f"{assessment['compliance_pct']}%")
+    st.metric(t("overall_compliance"), f"{assessment['compliance_pct']}%")
     st.progress(assessment["compliance_pct"] / 100)
 with col_score:
-    st.metric("Risk Score", f"{assessment['total_risk_score']} / {assessment['max_possible_score']}")
+    st.metric(t("risk_score_label"), f"{assessment['total_risk_score']} / {assessment['max_possible_score']}")
 
 st.divider()
 
 # ── NIST function breakdown ───────────────────────────────────────────────────
-st.subheader("Compliance by NIST Function")
+st.subheader(t("compliance_by_fn"))
+
+FUNCTION_LABELS = {
+    "govern_pct":  t("fn_govern"),
+    "map_pct":     t("fn_map"),
+    "measure_pct": t("fn_measure"),
+    "manage_pct":  t("fn_manage"),
+}
 
 for col_key, label in FUNCTION_LABELS.items():
     pct = assessment[col_key]
@@ -145,8 +150,8 @@ st.divider()
 # ── Top 3 priority actions ────────────────────────────────────────────────────
 if no_responses:
     top3 = no_responses[:3]
-    st.subheader("⚡ Top 3 Priority Actions")
-    st.caption("Fix these first — highest risk, biggest compliance impact.")
+    st.subheader(t("top3_title"))
+    st.caption(t("top3_caption"))
 
     for i, r in enumerate(top3, 1):
         q    = questions_by_id[r["question_id"]]
@@ -162,17 +167,17 @@ if no_responses:
                     unsafe_allow_html=True,
                 )
             with col_content:
-                st.markdown(f"**{q['text']}**")
+                st.markdown(f"**{qt(q, 'text', lang)}**")
                 st.markdown(
                     f"<div style='color:#27ae60; font-size:14px; margin-top:4px'>"
-                    f"→ {q['fix']}</div>",
+                    f"→ {qt(q, 'fix', lang)}</div>",
                     unsafe_allow_html=True,
                 )
             with col_badge:
                 st.markdown(
                     f"<div style='background:{badge_color}; color:white; text-align:center; "
                     f"padding:5px 8px; border-radius:8px; font-weight:700; font-size:13px; "
-                    f"margin-top:4px'>Risk {risk}</div>",
+                    f"margin-top:4px'>{t('risk')} {risk}</div>",
                     unsafe_allow_html=True,
                 )
 
@@ -180,11 +185,15 @@ if no_responses:
 
 # ── Full gap list ─────────────────────────────────────────────────────────────
 if not no_responses:
-    st.success("🎉 Fully compliant — no gaps found!")
+    st.success(t("fully_compliant"))
 else:
     remaining = no_responses[3:]
     if remaining:
-        with st.expander(f"🔧 View all {len(no_responses)} gaps (showing {len(remaining)} additional below top 3)"):
+        total = len(no_responses)
+        with st.expander(
+            f"🔧 {total} gaps — {len(remaining)} additional" if lang == "en"
+            else f"🔧 {total} lacunes — {len(remaining)} supplémentaires"
+        ):
             for i, r in enumerate(remaining, 4):
                 q    = questions_by_id[r["question_id"]]
                 risk = r["risk_score"]
@@ -193,28 +202,32 @@ else:
                 with st.container(border=True):
                     col_q, col_badge = st.columns([9, 1])
                     with col_q:
-                        st.markdown(f"**{i}. {q['text']}**")
+                        st.markdown(f"**{i}. {qt(q, 'text', lang)}**")
                     with col_badge:
                         st.markdown(
                             f"<div style='background:{badge_color}; color:white; text-align:center; "
                             f"padding:5px 8px; border-radius:8px; font-weight:700; font-size:13px'>"
-                            f"Risk {risk}</div>",
+                            f"{t('risk')} {risk}</div>",
                             unsafe_allow_html=True,
                         )
-                    st.info(f"**Why this matters:** {q['why']}")
+                    st.info(f"{t('why_matters_bold')}{qt(q, 'why', lang)}")
                     st.markdown(
-                        f"<div style='color:#27ae60; font-size:13px; padding:4px 0'>→ {q['fix']}</div>",
+                        f"<div style='color:#27ae60; font-size:13px; padding:4px 0'>"
+                        f"→ {qt(q, 'fix', lang)}</div>",
                         unsafe_allow_html=True,
                     )
                     refs = q["nist_ref"]
                     if q["owasp_ref"]:
                         refs += f" · {q['owasp_ref']}"
-                    st.caption(f"References: {refs}  ·  Risk Score: {risk}")
+                    st.caption(f"{t('references')} {refs}  ·  {t('risk_score_ref')} {risk}")
 
 # ── Compliant controls (collapsible) ─────────────────────────────────────────
 yes_responses = [r for r in responses if r["answer"] == "Yes"]
 if yes_responses:
-    with st.expander(f"✅ {len(yes_responses)} compliant controls"):
+    label = (
+        f"✅ {len(yes_responses)} {t('compliant_controls')}"
+    )
+    with st.expander(label):
         for r in yes_responses:
             q = questions_by_id[r["question_id"]]
-            st.markdown(f"✅ **Q{q['id']}.** {q['text']}")
+            st.markdown(f"✅ **Q{q['id']}.** {qt(q, 'text', lang)}")
