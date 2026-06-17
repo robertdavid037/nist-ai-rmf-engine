@@ -9,7 +9,7 @@ def render_sidebar():
         col_fr, col_en = st.columns(2)
         with col_fr:
             if st.button(
-                "🇫🇷 Français",
+                "🇨🇦 Français",
                 use_container_width=True,
                 type="primary" if lang == "fr" else "secondary",
                 key="lang_fr",
@@ -18,7 +18,7 @@ def render_sidebar():
                 st.rerun()
         with col_en:
             if st.button(
-                "🇬🇧 English",
+                "🇺🇸 English",
                 use_container_width=True,
                 type="primary" if lang == "en" else "secondary",
                 key="lang_en",
