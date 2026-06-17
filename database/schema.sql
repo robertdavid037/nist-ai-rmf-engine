@@ -11,10 +11,12 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS tools (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    name        TEXT NOT NULL UNIQUE,   -- e.g. "Microsoft Copilot"
+    name        TEXT NOT NULL,          -- e.g. "Microsoft Copilot"
     vendor      TEXT,                   -- e.g. "Microsoft"
     category    TEXT,                   -- e.g. "Productivity", "Code", "CRM"
-    created_at  TEXT DEFAULT (datetime('now'))
+    username    TEXT NOT NULL DEFAULT '',-- owner username; scopes data per tenant
+    created_at  TEXT DEFAULT (datetime('now')),
+    UNIQUE (name, username)             -- same tool name allowed for different users
 );
 
 -- ─────────────────────────────────────────────────────────────────────────────

@@ -6,3 +6,11 @@ database/assessments.db
 *.egg-info/
 .DS_Store
 .claude/
+
+# Credentials — NEVER commit
+credentials.yaml
+credentials.yml
+*.credentials.yaml
+secrets.yaml
+.streamlit/secrets.toml
+

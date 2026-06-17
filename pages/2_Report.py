@@ -4,6 +4,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from auth import require_login
 from database.db import get_connection, update_response_status
 from data.questions import QUESTIONS
 from pdf_export import generate_pdf
@@ -22,6 +23,7 @@ st.set_page_config(
 
 st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_allow_html=True)
 
+username = require_login()
 render_sidebar()
 
 lang = st.session_state.get("lang", "fr")
@@ -70,6 +72,11 @@ responses = [
     ).fetchall()
 ]
 conn.close()
+
+# Ownership guard — prevent accessing another user's reports via direct ID
+if tool.get("username", "") not in ("", username):
+    st.error("⛔ Accès refusé — ce rapport ne vous appartient pas.")
+    st.stop()
 
 questions_by_id = {q["id"]: q for q in QUESTIONS}
 tier  = assessment["risk_tier"]

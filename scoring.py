@@ -80,21 +80,25 @@ def pct_to_tier(pct):
     return "Unacceptable"
 
 
-def save_assessment(tool_name, vendor, category, assessor_name, responses):
+def save_assessment(tool_name, vendor, category, assessor_name, responses, username=""):
     """
     Saves a new assessment + responses to the database.
+    username scopes the tool to the logged-in user (tenant isolation).
     Returns the new assessment_id.
     """
     scores = calculate_scores(responses)
     conn   = get_connection()
 
-    row = conn.execute("SELECT id FROM tools WHERE name = ?", (tool_name,)).fetchone()
+    row = conn.execute(
+        "SELECT id FROM tools WHERE name = ? AND username = ?",
+        (tool_name, username),
+    ).fetchone()
     if row:
         tool_id = row["id"]
     else:
         cur = conn.execute(
-            "INSERT INTO tools (name, vendor, category) VALUES (?, ?, ?)",
-            (tool_name, vendor, category),
+            "INSERT INTO tools (name, vendor, category, username) VALUES (?, ?, ?, ?)",
+            (tool_name, vendor, category, username),
         )
         tool_id = cur.lastrowid
 

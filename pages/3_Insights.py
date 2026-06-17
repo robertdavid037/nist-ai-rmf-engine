@@ -6,6 +6,7 @@ import altair as alt
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from auth import require_login
 from database.db import get_connection
 from sidebar import render_sidebar
 from translations import t
@@ -19,20 +20,22 @@ st.set_page_config(
 
 st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_allow_html=True)
 
+username = require_login()
 render_sidebar()
 
 st.title(t("insights_title"))
 st.caption(t("insights_caption"))
 
-# ── Load data ──────────────────────────────────────────────────────────────────
+# ── Load data (scoped to logged-in user) ──────────────────────────────────────
 conn = get_connection()
 rows = conn.execute("""
     SELECT t.name AS tool_name, a.id, a.assessor_name, a.assessed_at,
            a.compliance_pct, a.risk_tier, a.next_review_date
     FROM assessments a
     JOIN tools t ON t.id = a.tool_id
+    WHERE t.username = ?
     ORDER BY a.assessed_at
-""").fetchall()
+""", (username,)).fetchall()
 conn.close()
 
 all_data = [dict(r) for r in rows]

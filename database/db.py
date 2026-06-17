@@ -23,6 +23,12 @@ def _migrate(conn):
     if "status" not in r_cols:
         conn.execute("ALTER TABLE responses ADD COLUMN status TEXT DEFAULT 'open'")
 
+    t_cols = [row[1] for row in conn.execute("PRAGMA table_info(tools)")]
+    if "username" not in t_cols:
+        conn.execute("ALTER TABLE tools ADD COLUMN username TEXT NOT NULL DEFAULT ''")
+        # Assign pre-existing seeded data to the demo user so it's visible on login
+        conn.execute("UPDATE tools SET username = 'demo' WHERE username = ''")
+
     conn.commit()
 
 

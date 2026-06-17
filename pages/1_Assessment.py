@@ -4,6 +4,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from auth import require_login
 from data.questions import QUESTIONS
 from scoring import save_assessment
 from sidebar import render_sidebar
@@ -18,6 +19,7 @@ st.set_page_config(
 
 st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_allow_html=True)
 
+username = require_login()
 render_sidebar()
 
 lang = st.session_state.get("lang", "fr")
@@ -167,6 +169,7 @@ if submit:
         assessment_id = save_assessment(
             tool_name.strip(), vendor, category,
             assessor_name.strip(), responses,
+            username=username,
         )
 
     st.session_state.selected_assessment_id = assessment_id

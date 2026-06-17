@@ -4,6 +4,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(__file__))
 
+from auth import require_login
 from database.db import init_db, get_connection
 from sidebar import render_sidebar
 from translations import t
@@ -31,6 +32,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 init_db()
+username = require_login()
 render_sidebar()
 
 TIER_BG = {
@@ -75,14 +77,15 @@ rows = conn.execute("""
     FROM tools t
     JOIN assessments a ON a.tool_id = t.id
     LEFT JOIN responses r ON r.assessment_id = a.id
-    WHERE a.id = (
+    WHERE t.username = ?
+      AND a.id = (
         SELECT id FROM assessments
         WHERE tool_id = t.id
         ORDER BY assessed_at DESC
         LIMIT 1
     )
     GROUP BY t.id, a.id
-""").fetchall()
+""", (username,)).fetchall()
 conn.close()
 
 tools = [dict(r) for r in rows]
