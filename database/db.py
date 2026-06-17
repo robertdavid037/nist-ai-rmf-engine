@@ -15,10 +15,32 @@ def get_connection():
 
 def _migrate(conn):
     """Add columns introduced after initial schema without breaking existing DBs."""
-    columns = [row[1] for row in conn.execute("PRAGMA table_info(assessments)")]
-    if "loi25_pct" not in columns:
+    a_cols = [row[1] for row in conn.execute("PRAGMA table_info(assessments)")]
+    if "loi25_pct" not in a_cols:
         conn.execute("ALTER TABLE assessments ADD COLUMN loi25_pct INTEGER DEFAULT 100")
+
+    r_cols = [row[1] for row in conn.execute("PRAGMA table_info(responses)")]
+    if "status" not in r_cols:
+        conn.execute("ALTER TABLE responses ADD COLUMN status TEXT DEFAULT 'open'")
+
     conn.commit()
+
+
+def update_response_status(response_id, status, notes=None):
+    """Persist a gap's remediation status (and optionally notes) to the DB."""
+    conn = get_connection()
+    if notes is not None:
+        conn.execute(
+            "UPDATE responses SET status = ?, notes = ? WHERE id = ?",
+            (status, notes, response_id),
+        )
+    else:
+        conn.execute(
+            "UPDATE responses SET status = ? WHERE id = ?",
+            (status, response_id),
+        )
+    conn.commit()
+    conn.close()
 
 
 def init_db():

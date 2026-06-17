@@ -4,10 +4,11 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from database.db import get_connection
+from database.db import get_connection, update_response_status
 from data.questions import QUESTIONS
 from pdf_export import generate_pdf
 from doc_generator import generate_doc
+from scoring import live_scores
 from sidebar import render_sidebar
 from verdict import get_verdict
 from translations import t, qt
@@ -24,6 +25,14 @@ st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_
 render_sidebar()
 
 lang = st.session_state.get("lang", "fr")
+
+STATUS_KEYS = ["open", "in_progress", "resolved"]
+
+
+def _save_status(resp_id):
+    new_status = st.session_state[f"status_{resp_id}"]
+    update_response_status(resp_id, new_status)
+
 
 TIER_BG = {
     "Minimal":      "#27ae60",
@@ -174,10 +183,22 @@ st.markdown(
 )
 
 # ── Overall score ─────────────────────────────────────────────────────────────
-col_pct, col_score, col_spacer = st.columns([1, 1, 3])
-with col_pct:
-    st.metric(t("overall_compliance"), f"{assessment['compliance_pct']}%")
-    st.progress(assessment["compliance_pct"] / 100)
+current = live_scores(responses)
+live_pct = current["compliance_pct"]
+original_pct = assessment["compliance_pct"]
+delta = live_pct - original_pct
+
+col_orig, col_live, col_score, col_spacer = st.columns([1, 1, 1, 2])
+with col_orig:
+    st.metric(t("original_score_label"), f"{original_pct}%")
+    st.progress(original_pct / 100)
+with col_live:
+    st.metric(
+        t("live_score_label"),
+        f"{live_pct}%",
+        delta=f"+{delta}%" if delta > 0 else (f"{delta}%" if delta < 0 else None),
+    )
+    st.progress(live_pct / 100)
 with col_score:
     st.metric(t("risk_score_label"), f"{assessment['total_risk_score']} / {assessment['max_possible_score']}")
 
@@ -215,6 +236,7 @@ if no_responses:
         q    = questions_by_id[r["question_id"]]
         risk = r["risk_score"]
         badge_color = "#e74c3c" if risk >= 16 else "#f39c12" if risk >= 9 else "#3498db"
+        resp_status = r.get("status", "open")
 
         with st.container(border=True):
             col_num, col_content, col_badge = st.columns([0.15, 8, 1])
@@ -239,6 +261,36 @@ if no_responses:
                     unsafe_allow_html=True,
                 )
 
+            col_status, col_notes = st.columns([1, 3])
+            with col_status:
+                status_idx = STATUS_KEYS.index(resp_status) if resp_status in STATUS_KEYS else 0
+                st.selectbox(
+                    t("status_label"),
+                    STATUS_KEYS,
+                    index=status_idx,
+                    format_func=lambda s: {
+                        "open": t("status_open"),
+                        "in_progress": t("status_in_progress"),
+                        "resolved": t("status_resolved"),
+                    }[s],
+                    key=f"status_{r['id']}",
+                    on_change=_save_status,
+                    args=(r["id"],),
+                )
+            with col_notes:
+                notes_key = f"notes_{r['id']}"
+                notes_val = st.text_area(
+                    t("notes_label"),
+                    value=r.get("notes", "") or "",
+                    height=80,
+                    placeholder=t("notes_ph"),
+                    key=notes_key,
+                    label_visibility="collapsed",
+                )
+                if st.button(t("btn_save_notes"), key=f"savenotes_{r['id']}"):
+                    update_response_status(r["id"], st.session_state.get(f"status_{r['id']}", resp_status), notes_val)
+                    st.toast("✓ Saved" if lang == "en" else "✓ Sauvegardé")
+
     st.divider()
 
 # ── Full gap list ─────────────────────────────────────────────────────────────
@@ -256,6 +308,7 @@ else:
                 q    = questions_by_id[r["question_id"]]
                 risk = r["risk_score"]
                 badge_color = "#e74c3c" if risk >= 16 else "#f39c12" if risk >= 9 else "#3498db"
+                resp_status = r.get("status", "open")
 
                 with st.container(border=True):
                     col_q, col_badge = st.columns([9, 1])
@@ -278,6 +331,36 @@ else:
                     if q["owasp_ref"]:
                         refs += f" · {q['owasp_ref']}"
                     st.caption(f"{t('references')} {refs}  ·  {t('risk_score_ref')} {risk}")
+
+                    col_status, col_notes = st.columns([1, 3])
+                    with col_status:
+                        status_idx = STATUS_KEYS.index(resp_status) if resp_status in STATUS_KEYS else 0
+                        st.selectbox(
+                            t("status_label"),
+                            STATUS_KEYS,
+                            index=status_idx,
+                            format_func=lambda s: {
+                                "open": t("status_open"),
+                                "in_progress": t("status_in_progress"),
+                                "resolved": t("status_resolved"),
+                            }[s],
+                            key=f"status_{r['id']}",
+                            on_change=_save_status,
+                            args=(r["id"],),
+                        )
+                    with col_notes:
+                        notes_key = f"notes_{r['id']}"
+                        notes_val = st.text_area(
+                            t("notes_label"),
+                            value=r.get("notes", "") or "",
+                            height=80,
+                            placeholder=t("notes_ph"),
+                            key=notes_key,
+                            label_visibility="collapsed",
+                        )
+                        if st.button(t("btn_save_notes"), key=f"savenotes_{r['id']}"):
+                            update_response_status(r["id"], st.session_state.get(f"status_{r['id']}", resp_status), notes_val)
+                            st.toast("✓ Saved" if lang == "en" else "✓ Sauvegardé")
 
 # ── Loi 25 section ───────────────────────────────────────────────────────────
 st.divider()
@@ -304,6 +387,7 @@ else:
         q    = questions_by_id[r["question_id"]]
         risk = r["risk_score"]
         badge_color = "#e74c3c" if risk >= 16 else "#f39c12" if risk >= 9 else "#3498db"
+        resp_status = r.get("status", "open")
 
         with st.container(border=True):
             col_q, col_badge = st.columns([9, 1])
@@ -323,6 +407,35 @@ else:
                 f"→ {qt(q, 'fix', lang)}</div>",
                 unsafe_allow_html=True,
             )
+            col_status, col_notes = st.columns([1, 3])
+            with col_status:
+                status_idx = STATUS_KEYS.index(resp_status) if resp_status in STATUS_KEYS else 0
+                st.selectbox(
+                    t("status_label"),
+                    STATUS_KEYS,
+                    index=status_idx,
+                    format_func=lambda s: {
+                        "open": t("status_open"),
+                        "in_progress": t("status_in_progress"),
+                        "resolved": t("status_resolved"),
+                    }[s],
+                    key=f"status_{r['id']}",
+                    on_change=_save_status,
+                    args=(r["id"],),
+                )
+            with col_notes:
+                notes_key = f"notes_{r['id']}"
+                notes_val = st.text_area(
+                    t("notes_label"),
+                    value=r.get("notes", "") or "",
+                    height=80,
+                    placeholder=t("notes_ph"),
+                    key=notes_key,
+                    label_visibility="collapsed",
+                )
+                if st.button(t("btn_save_notes"), key=f"savenotes_{r['id']}"):
+                    update_response_status(r["id"], st.session_state.get(f"status_{r['id']}", resp_status), notes_val)
+                    st.toast("✓ Saved" if lang == "en" else "✓ Sauvegardé")
 
 # ── Compliant controls (collapsible) ─────────────────────────────────────────
 yes_responses = [r for r in responses if r["answer"] == "Yes"]

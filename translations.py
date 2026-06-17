@@ -102,6 +102,20 @@ TRANSLATIONS = {
         "pdf_loi25_title":      "Conformite - Loi 25 du Quebec",
         "pdf_loi25_disclaimer": "Orientation basee sur les exigences publiques de la Loi 25. Consultez un avocat specialise pour un avis juridique.",
 
+        # Remediation tracker
+        "status_label":         "Statut",
+        "status_open":          "Ouvert",
+        "status_in_progress":   "En cours",
+        "status_resolved":      "Résolu ✓",
+        "notes_label":          "Notes de remédiation",
+        "notes_ph":             "Décrivez les mesures prises...",
+        "btn_save_notes":       "💾 Sauvegarder",
+        "live_score_label":     "Posture actuelle",
+        "original_score_label": "Score initial",
+        "gaps_resolved_label":  "lacune(s) résolue(s)",
+        "remediation_progress": "🔧 Remédiation",
+        "no_open_gaps":         "✅ Toutes les lacunes ont été résolues !",
+
         # Document generator
         "docs_section_label":   "📄 Télécharger les documents de politique",
         "docs_org_name_label":  "Nom de votre organisation",
@@ -226,6 +240,20 @@ TRANSLATIONS = {
         "loi25_disclaimer":     "This report provides guidance based on publicly available Law 25 requirements. Consult a Quebec privacy lawyer for legal advice.",
         "pdf_loi25_title":      "Compliance - Quebec Law 25",
         "pdf_loi25_disclaimer": "Guidance based on publicly available Law 25 requirements. Consult a privacy lawyer for legal advice.",
+
+        # Remediation tracker
+        "status_label":         "Status",
+        "status_open":          "Open",
+        "status_in_progress":   "In Progress",
+        "status_resolved":      "Resolved ✓",
+        "notes_label":          "Remediation Notes",
+        "notes_ph":             "Describe the steps taken...",
+        "btn_save_notes":       "💾 Save",
+        "live_score_label":     "Current Posture",
+        "original_score_label": "Original Score",
+        "gaps_resolved_label":  "gap(s) resolved",
+        "remediation_progress": "🔧 Remediation",
+        "no_open_gaps":         "✅ All gaps have been resolved!",
 
         # Document generator
         "docs_section_label":   "📄 Download Policy Documents",

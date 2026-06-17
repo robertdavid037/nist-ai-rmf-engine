@@ -56,5 +56,6 @@ CREATE TABLE IF NOT EXISTS responses (
     likelihood      INTEGER DEFAULT 0,  -- 1–5 (only used when answer = "No")
     impact          INTEGER DEFAULT 0,  -- 1–5 (only used when answer = "No")
     risk_score      INTEGER DEFAULT 0,  -- likelihood × impact (0 if answer = "Yes")
-    notes           TEXT DEFAULT ''     -- optional free text from assessor
+    notes           TEXT DEFAULT '',    -- optional free text from assessor
+    status          TEXT DEFAULT 'open' -- open | in_progress | resolved
 );

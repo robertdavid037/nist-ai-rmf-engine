@@ -69,15 +69,19 @@ rows = conn.execute("""
     SELECT t.name, t.vendor, t.category,
            a.id AS assessment_id,
            a.compliance_pct, a.risk_tier, a.assessed_at, a.next_review_date,
-           a.loi25_pct
+           a.loi25_pct,
+           COALESCE(SUM(CASE WHEN r.answer = 'No' AND r.status = 'resolved' THEN 1 ELSE 0 END), 0) AS gaps_resolved,
+           COALESCE(SUM(CASE WHEN r.answer = 'No' THEN 1 ELSE 0 END), 0) AS gaps_total
     FROM tools t
     JOIN assessments a ON a.tool_id = t.id
+    LEFT JOIN responses r ON r.assessment_id = a.id
     WHERE a.id = (
         SELECT id FROM assessments
         WHERE tool_id = t.id
         ORDER BY assessed_at DESC
         LIMIT 1
     )
+    GROUP BY t.id, a.id
 """).fetchall()
 conn.close()
 
@@ -126,7 +130,12 @@ else:
 
                 assessed = tool["assessed_at"][:10]
                 next_rev = tool["next_review_date"]
-                st.caption(f"{t('assessed')} {assessed} · {t('review_due')} {next_rev}")
+                gaps_resolved = tool.get("gaps_resolved", 0)
+                gaps_total    = tool.get("gaps_total", 0)
+                caption_parts = [f"{t('assessed')} {assessed} · {t('review_due')} {next_rev}"]
+                if gaps_total > 0:
+                    caption_parts.append(f"🔧 {gaps_resolved}/{gaps_total} {t('gaps_resolved_label')}")
+                st.caption("  ·  ".join(caption_parts))
 
                 if st.button(
                     t("btn_view_report"),

@@ -56,6 +56,20 @@ def calculate_scores(responses):
     }
 
 
+def live_scores(responses):
+    """
+    Recalculate scores treating 'resolved' gaps as compliant (risk = 0).
+    Accepts the full response list including status field.
+    """
+    adjusted = [
+        {**r, "answer": "Yes"}
+        if r["answer"] == "No" and r.get("status", "open") == "resolved"
+        else r
+        for r in responses
+    ]
+    return calculate_scores(adjusted)
+
+
 def pct_to_tier(pct):
     if pct >= 80:
         return "Minimal"
