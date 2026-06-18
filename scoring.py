@@ -89,18 +89,14 @@ def save_assessment(tool_name, vendor, category, assessor_name, responses, usern
     scores = calculate_scores(responses)
     conn   = get_connection()
 
-    row = conn.execute(
+    conn.execute(
+        "INSERT OR IGNORE INTO tools (name, vendor, category, username) VALUES (?, ?, ?, ?)",
+        (tool_name, vendor, category, username),
+    )
+    tool_id = conn.execute(
         "SELECT id FROM tools WHERE name = ? AND username = ?",
         (tool_name, username),
-    ).fetchone()
-    if row:
-        tool_id = row["id"]
-    else:
-        cur = conn.execute(
-            "INSERT INTO tools (name, vendor, category, username) VALUES (?, ?, ?, ?)",
-            (tool_name, vendor, category, username),
-        )
-        tool_id = cur.lastrowid
+    ).fetchone()["id"]
 
     now         = datetime.now()
     next_review = now + timedelta(days=90)
