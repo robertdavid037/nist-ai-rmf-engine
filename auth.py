@@ -1,9 +1,12 @@
 """
 auth.py — Authentication utilities for the NIST AI RMF Compliance Engine.
 
-Credentials live at ~/.config/nist-rmf/credentials.yaml (outside the repo).
-Override the path with the RMF_CREDENTIALS_PATH environment variable.
-Run scripts/setup_auth.py once to create the file.
+Credentials are loaded from two sources, in priority order:
+  1. Streamlit Cloud Secrets (st.secrets) — for cloud deployment
+  2. ~/.config/nist-rmf/credentials.yaml  — for local deployment
+
+Run scripts/setup_auth.py for local setup, or use the in-browser wizard
+which also shows the TOML to paste into Streamlit Cloud Secrets.
 """
 import os
 import stat
@@ -21,13 +24,45 @@ CREDS_PATH: str = os.environ.get(
 
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
+def _secrets_available() -> bool:
+    """True when Streamlit Cloud secrets contain our credentials block."""
+    try:
+        return "credentials" in st.secrets and "cookie" in st.secrets
+    except Exception:
+        return False
+
+
+def _config_available() -> bool:
+    return _secrets_available() or os.path.exists(CREDS_PATH)
+
+
+def _deep_dict(obj) -> dict:
+    """Recursively convert Streamlit AttrDict sections to plain dicts."""
+    if hasattr(obj, "to_dict"):
+        return {k: _deep_dict(v) for k, v in obj.to_dict().items()}
+    if hasattr(obj, "items"):
+        return {k: _deep_dict(v) for k, v in obj.items()}
+    return obj
+
+
 def _load_config() -> dict:
+    """Load from st.secrets (cloud) first, then fall back to local YAML."""
+    if _secrets_available():
+        return {
+            "credentials": _deep_dict(st.secrets["credentials"]),
+            "cookie":      _deep_dict(st.secrets["cookie"]),
+        }
     with open(CREDS_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
 def _save_config(config: dict) -> None:
-    """Write config and immediately re-apply 600 permissions."""
+    """Write to local YAML file with 600 permissions. No-op on cloud-only mode."""
+    if _secrets_available() and not os.path.exists(CREDS_PATH):
+        return  # running cloud-only; changes require updating Streamlit secrets
+    creds_dir = os.path.dirname(CREDS_PATH)
+    if creds_dir:
+        os.makedirs(creds_dir, mode=0o700, exist_ok=True)
     with open(CREDS_PATH, "w", encoding="utf-8") as f:
         yaml.dump(config, f, default_flow_style=False, allow_unicode=True)
     os.chmod(CREDS_PATH, stat.S_IRUSR | stat.S_IWUSR)
@@ -40,7 +75,7 @@ def _make_authenticator() -> stauth.Authenticate:
         config["cookie"]["name"],
         config["cookie"]["key"],
         config["cookie"]["expiry_days"],
-        auto_hash=False,  # passwords are pre-hashed by setup_auth.py / add_user()
+        auto_hash=False,
     )
 
 
@@ -51,7 +86,7 @@ def require_login() -> str:
     Call at the top of every page.
     Returns the authenticated username, or renders the login/setup form and stops.
     """
-    if not os.path.exists(CREDS_PATH):
+    if not _config_available():
         _render_first_run_setup()
         st.stop()
 
@@ -127,7 +162,11 @@ def list_users() -> list[dict]:
 # ── First-run setup wizard ────────────────────────────────────────────────────
 
 def _render_first_run_setup() -> None:
-    """In-browser first-run setup — shown when no credentials file exists yet."""
+    """
+    In-browser first-run setup.
+    - Local mode: writes credentials.yaml and reloads.
+    - Cloud mode: generates TOML and shows step-by-step Streamlit Cloud secrets instructions.
+    """
     import secrets as _secrets
 
     st.markdown(
@@ -138,59 +177,61 @@ def _render_first_run_setup() -> None:
     _, col, _ = st.columns([1, 2, 1])
     with col:
         st.markdown(
-            "<div style='text-align:center; padding:40px 0 8px'>"
+            "<div style='text-align:center; padding:40px 0 16px'>"
             "<div style='font-size:48px'>🛡️</div>"
             "<h2 style='margin:8px 0 4px'>NIST AI RMF</h2>"
-            "<p style='color:#666; margin:0 0 8px'>Première configuration · First-time setup</p>"
+            "<p style='color:#666; margin:0 0 8px'>First-time setup · Première configuration</p>"
             "</div>",
             unsafe_allow_html=True,
         )
+
+        # Detect cloud vs local
+        on_cloud = not os.path.exists(os.path.dirname(CREDS_PATH) or ".") or \
+                   os.environ.get("STREAMLIT_SHARING_MODE") or \
+                   os.environ.get("IS_STREAMLIT_CLOUD")
+
         st.info(
-            "Aucun compte trouvé. Créez votre compte administrateur ci-dessous.\n\n"
-            "No accounts found. Create your admin account below.",
+            "No accounts configured yet. Fill in the form to create your admin account.",
             icon="🔐",
         )
 
         with st.form("first_run_form"):
-            username  = st.text_input("Nom d'utilisateur · Username *", placeholder="admin")
-            name      = st.text_input("Nom complet · Full name *",      placeholder="Marie Tremblay")
-            email     = st.text_input("Courriel · Email",               placeholder="marie@example.com")
-            password  = st.text_input("Mot de passe · Password *",      type="password",
-                                      placeholder="Min. 8 characters")
-            password2 = st.text_input("Confirmer · Confirm *",          type="password")
+            username  = st.text_input("Username *",   placeholder="admin")
+            name      = st.text_input("Full name *",  placeholder="Marie Tremblay")
+            email     = st.text_input("Email",        placeholder="you@company.com")
+            password  = st.text_input("Password *",   type="password", placeholder="Min. 8 characters")
+            password2 = st.text_input("Confirm password *", type="password")
             submitted = st.form_submit_button(
-                "Créer le compte et continuer →", type="primary", use_container_width=True
+                "Generate credentials →", type="primary", use_container_width=True
             )
 
         if submitted:
             errors = []
             if not username.strip():
-                errors.append("Le nom d'utilisateur est requis. · Username is required.")
+                errors.append("Username is required.")
             if not name.strip():
-                errors.append("Le nom complet est requis. · Full name is required.")
+                errors.append("Full name is required.")
             if len(password) < 8:
-                errors.append("Le mot de passe doit comporter au moins 8 caractères. · Min. 8 characters.")
+                errors.append("Password must be at least 8 characters.")
             if password != password2:
-                errors.append("Les mots de passe ne correspondent pas. · Passwords do not match.")
+                errors.append("Passwords do not match.")
 
             if errors:
                 for e in errors:
                     st.error(e)
             else:
                 hashed     = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
-                cookie_key = _secrets.token_hex(32)  # 256-bit random secret
+                cookie_key = _secrets.token_hex(32)
 
                 config = {
-                    "credentials": {
-                        "usernames": {
-                            username.strip(): {
-                                "name":     name.strip(),
-                                "email":    email.strip(),
-                                "password": hashed,
-                                "role":     "admin",
-                            }
+                    "credentials": {"usernames": {
+                        username.strip(): {
+                            "name":     name.strip(),
+                            "email":    email.strip(),
+                            "password": hashed,
+                            "role":     "admin",
                         }
-                    },
+                    }},
                     "cookie": {
                         "name":        "nist_rmf_session",
                         "key":         cookie_key,
@@ -198,16 +239,49 @@ def _render_first_run_setup() -> None:
                     },
                 }
 
-                creds_dir = os.path.dirname(CREDS_PATH)
-                if creds_dir:
-                    os.makedirs(creds_dir, mode=0o700, exist_ok=True)
-                _save_config(config)
+                # Try to write locally first
+                local_written = False
+                try:
+                    _save_config(config)
+                    local_written = True
+                except Exception:
+                    pass
 
-                st.success(
-                    f"✓ Compte **{username.strip()}** créé. Rechargez la page pour vous connecter.\n\n"
-                    f"✓ Account **{username.strip()}** created. Reload the page to log in."
-                )
-                st.balloons()
+                if local_written:
+                    st.success(f"✓ Account **{username.strip()}** created. Reload the page to log in.")
+                    st.balloons()
+                else:
+                    # Cloud mode — show the TOML to paste into Streamlit Cloud secrets
+                    toml = (
+                        f'[cookie]\n'
+                        f'name = "nist_rmf_session"\n'
+                        f'key = "{cookie_key}"\n'
+                        f'expiry_days = 1\n\n'
+                        f'[credentials.usernames.{username.strip()}]\n'
+                        f'name = "{name.strip()}"\n'
+                        f'email = "{email.strip()}"\n'
+                        f'password = "{hashed}"\n'
+                        f'role = "admin"\n'
+                    )
+                    st.success("✓ Credentials generated. Follow the 3 steps below to activate them.")
+                    st.markdown("### How to activate (30 seconds)")
+                    st.markdown(
+                        "**Step 1** — Copy everything in the box below:"
+                    )
+                    st.code(toml, language="toml")
+                    st.markdown(
+                        "**Step 2** — In the Streamlit Cloud dashboard, open your app, "
+                        "click the **⋮ menu** (top-right) → **Settings** → **Secrets**, "
+                        "paste the text above, and click **Save**."
+                    )
+                    st.markdown(
+                        "**Step 3** — Come back here and **reload this page**. "
+                        f"Log in with username `{username.strip()}` and the password you just entered."
+                    )
+                    st.warning(
+                        "Keep this TOML safe — it contains your hashed password. "
+                        "Do not share it publicly."
+                    )
 
 
 # ── Login page UI ─────────────────────────────────────────────────────────────
