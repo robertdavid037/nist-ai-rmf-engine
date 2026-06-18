@@ -296,7 +296,7 @@ def seed(skip_init=False):
 
     for tool_data in DEMO_TOOLS:
         cur = conn.execute(
-            "INSERT INTO tools (name, vendor, category) VALUES (?, ?, ?)",
+            "INSERT INTO tools (name, vendor, category, username) VALUES (?, ?, ?, 'demo')",
             (tool_data["name"], tool_data["vendor"], tool_data["category"]),
         )
         tool_id = cur.lastrowid

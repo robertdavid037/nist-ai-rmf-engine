@@ -61,8 +61,9 @@ def _migrate(conn):
     t_cols = [row[1] for row in conn.execute("PRAGMA table_info(tools)")]
     if "username" not in t_cols:
         conn.execute("ALTER TABLE tools ADD COLUMN username TEXT NOT NULL DEFAULT ''")
-        # Assign pre-existing seeded data to the demo user so it's visible on login
-        conn.execute("UPDATE tools SET username = 'demo' WHERE username = ''")
+
+    # Always fix tools seeded without a username (fresh DBs get username='' default)
+    conn.execute("UPDATE tools SET username = 'demo' WHERE username = ''")
 
     _fix_tools_unique(conn)
     conn.commit()

@@ -86,6 +86,10 @@ def save_assessment(tool_name, vendor, category, assessor_name, responses, usern
     username scopes the tool to the logged-in user (tenant isolation).
     Returns the new assessment_id.
     """
+    if not username and username != "":
+        raise ValueError(f"save_assessment: username must be a string, got {type(username)}")
+    username = str(username) if username is not None else ""
+
     scores = calculate_scores(responses)
     conn   = get_connection()
 
