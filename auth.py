@@ -8,6 +8,8 @@ Credentials are loaded from two sources, in priority order:
 Run scripts/setup_auth.py for local setup, or use the in-browser wizard
 which also shows the TOML to paste into Streamlit Cloud Secrets.
 """
+from __future__ import annotations  # Python 3.8 compatibility for type hints
+
 import os
 import stat
 
