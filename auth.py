@@ -49,14 +49,10 @@ def _make_authenticator() -> stauth.Authenticate:
 def require_login() -> str:
     """
     Call at the top of every page.
-    Returns the authenticated username, or renders the login form and stops.
+    Returns the authenticated username, or renders the login/setup form and stops.
     """
     if not os.path.exists(CREDS_PATH):
-        st.error(
-            "**No credentials file found.**\n\n"
-            "Run the setup script to create one:\n\n"
-            "```\npython scripts/setup_auth.py\n```"
-        )
+        _render_first_run_setup()
         st.stop()
 
     auth = _make_authenticator()
@@ -126,6 +122,92 @@ def list_users() -> list[dict]:
         }
         for uname, data in config["credentials"]["usernames"].items()
     ]
+
+
+# ── First-run setup wizard ────────────────────────────────────────────────────
+
+def _render_first_run_setup() -> None:
+    """In-browser first-run setup — shown when no credentials file exists yet."""
+    import secrets as _secrets
+
+    st.markdown(
+        "<style>[data-testid='stSidebarNav']{display:none}</style>",
+        unsafe_allow_html=True,
+    )
+
+    _, col, _ = st.columns([1, 2, 1])
+    with col:
+        st.markdown(
+            "<div style='text-align:center; padding:40px 0 8px'>"
+            "<div style='font-size:48px'>🛡️</div>"
+            "<h2 style='margin:8px 0 4px'>NIST AI RMF</h2>"
+            "<p style='color:#666; margin:0 0 8px'>Première configuration · First-time setup</p>"
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        st.info(
+            "Aucun compte trouvé. Créez votre compte administrateur ci-dessous.\n\n"
+            "No accounts found. Create your admin account below.",
+            icon="🔐",
+        )
+
+        with st.form("first_run_form"):
+            username  = st.text_input("Nom d'utilisateur · Username *", placeholder="admin")
+            name      = st.text_input("Nom complet · Full name *",      placeholder="Marie Tremblay")
+            email     = st.text_input("Courriel · Email",               placeholder="marie@example.com")
+            password  = st.text_input("Mot de passe · Password *",      type="password",
+                                      placeholder="Min. 8 characters")
+            password2 = st.text_input("Confirmer · Confirm *",          type="password")
+            submitted = st.form_submit_button(
+                "Créer le compte et continuer →", type="primary", use_container_width=True
+            )
+
+        if submitted:
+            errors = []
+            if not username.strip():
+                errors.append("Le nom d'utilisateur est requis. · Username is required.")
+            if not name.strip():
+                errors.append("Le nom complet est requis. · Full name is required.")
+            if len(password) < 8:
+                errors.append("Le mot de passe doit comporter au moins 8 caractères. · Min. 8 characters.")
+            if password != password2:
+                errors.append("Les mots de passe ne correspondent pas. · Passwords do not match.")
+
+            if errors:
+                for e in errors:
+                    st.error(e)
+            else:
+                hashed     = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
+                cookie_key = _secrets.token_hex(32)  # 256-bit random secret
+
+                config = {
+                    "credentials": {
+                        "usernames": {
+                            username.strip(): {
+                                "name":     name.strip(),
+                                "email":    email.strip(),
+                                "password": hashed,
+                                "role":     "admin",
+                            }
+                        }
+                    },
+                    "cookie": {
+                        "name":        "nist_rmf_session",
+                        "key":         cookie_key,
+                        "expiry_days": 1,
+                    },
+                }
+
+                creds_dir = os.path.dirname(CREDS_PATH)
+                if creds_dir:
+                    os.makedirs(creds_dir, mode=0o700, exist_ok=True)
+                _save_config(config)
+
+                st.success(
+                    f"✓ Compte **{username.strip()}** créé. Rechargez la page pour vous connecter.\n\n"
+                    f"✓ Account **{username.strip()}** created. Reload the page to log in."
+                )
+                st.balloons()
 
 
 # ── Login page UI ─────────────────────────────────────────────────────────────
