@@ -5,6 +5,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from auth import require_login, is_admin, is_cloud_mode, add_user, remove_user, change_password, list_users
+from database.db import init_db
 from sidebar import render_sidebar
 
 st.set_page_config(
@@ -15,6 +16,7 @@ st.set_page_config(
 )
 st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_allow_html=True)
 
+init_db()
 require_login()
 render_sidebar()
 

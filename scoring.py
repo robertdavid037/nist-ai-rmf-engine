@@ -89,14 +89,22 @@ def save_assessment(tool_name, vendor, category, assessor_name, responses, usern
     scores = calculate_scores(responses)
     conn   = get_connection()
 
-    conn.execute(
+    cur = conn.execute(
         "INSERT OR IGNORE INTO tools (name, vendor, category, username) VALUES (?, ?, ?, ?)",
         (tool_name, vendor, category, username),
     )
-    tool_id = conn.execute(
-        "SELECT id FROM tools WHERE name = ? AND username = ?",
-        (tool_name, username),
-    ).fetchone()["id"]
+    tool_id = cur.lastrowid  # 0/None when INSERT was ignored (row already exists)
+    if not tool_id:
+        row = conn.execute(
+            "SELECT id FROM tools WHERE name = ? AND username = ?",
+            (tool_name, username),
+        ).fetchone()
+        if row is None:
+            raise RuntimeError(
+                f"Could not create or find tool '{tool_name}' for user '{username}'. "
+                "Try rebooting the app from the Streamlit Cloud dashboard."
+            )
+        tool_id = row["id"]
 
     now         = datetime.now()
     next_review = now + timedelta(days=90)

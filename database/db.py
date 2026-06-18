@@ -13,6 +13,41 @@ def get_connection():
     return conn
 
 
+def _fix_tools_unique(conn):
+    """Recreate tools table if it has UNIQUE(name) instead of UNIQUE(name, username).
+
+    ALTER TABLE cannot change constraints, so we rename → recreate → copy.
+    This only runs when the old single-column constraint is detected.
+    """
+    row = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='tools'"
+    ).fetchone()
+    if not row:
+        return  # table doesn't exist yet; schema.sql will create it correctly
+    sql = (row[0] or "").upper()
+    if "UNIQUE" in sql and "USERNAME" in sql:
+        return  # already has UNIQUE(name, username) — nothing to do
+    # Recreate with the correct composite constraint, preserving existing data
+    conn.executescript("""
+        DROP TABLE IF EXISTS tools_new;
+        CREATE TABLE tools_new (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            name        TEXT NOT NULL,
+            vendor      TEXT,
+            category    TEXT,
+            username    TEXT NOT NULL DEFAULT '',
+            created_at  TEXT DEFAULT (datetime('now')),
+            UNIQUE (name, username)
+        );
+        INSERT OR IGNORE INTO tools_new (id, name, vendor, category, username, created_at)
+            SELECT id, name, vendor, category,
+                   COALESCE(username, 'demo'), created_at
+            FROM tools;
+        DROP TABLE tools;
+        ALTER TABLE tools_new RENAME TO tools;
+    """)
+
+
 def _migrate(conn):
     """Add columns introduced after initial schema without breaking existing DBs."""
     a_cols = [row[1] for row in conn.execute("PRAGMA table_info(assessments)")]
@@ -29,6 +64,7 @@ def _migrate(conn):
         # Assign pre-existing seeded data to the demo user so it's visible on login
         conn.execute("UPDATE tools SET username = 'demo' WHERE username = ''")
 
+    _fix_tools_unique(conn)
     conn.commit()
 
 

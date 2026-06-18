@@ -5,7 +5,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from auth import require_login
-from database.db import get_connection, update_response_status
+from database.db import init_db, get_connection, update_response_status
 from data.questions import QUESTIONS
 from pdf_export import generate_pdf
 from doc_generator import generate_doc
@@ -23,6 +23,7 @@ st.set_page_config(
 
 st.markdown("<style>[data-testid='stSidebarNav']{display:none}</style>", unsafe_allow_html=True)
 
+init_db()
 username = require_login()
 render_sidebar()
 
