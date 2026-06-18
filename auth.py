@@ -109,12 +109,14 @@ def require_login() -> str:
 
 
 def render_logout_button() -> None:
-    """Render a logout button in the current location (call from within st.sidebar)."""
+    """Render username + logout button in the current location (call from within st.sidebar)."""
     if st.session_state.get("authentication_status") is True:
-        auth = _make_authenticator()
         name = st.session_state.get("name", st.session_state.get("username", ""))
         st.caption(f"👤 {name}")
-        auth.logout("🚪 Déconnexion / Logout", location="sidebar", key="sidebar_logout")
+        if st.button("🚪 Déconnexion / Logout", use_container_width=True, key="sidebar_logout"):
+            for key in ("authentication_status", "username", "name", "logout"):
+                st.session_state.pop(key, None)
+            st.rerun()
 
 
 def is_admin() -> bool:
