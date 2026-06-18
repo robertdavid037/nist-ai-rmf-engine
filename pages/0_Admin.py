@@ -4,7 +4,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from auth import require_login, is_admin, add_user, remove_user, change_password, list_users
+from auth import require_login, is_admin, is_cloud_mode, add_user, remove_user, change_password, list_users
 from sidebar import render_sidebar
 
 st.set_page_config(
@@ -24,6 +24,19 @@ if not is_admin():
 
 st.title("⚙️ Administration — Gestion des utilisateurs")
 st.caption("Seuls les comptes avec le rôle **admin** peuvent accéder à cette page.")
+
+if is_cloud_mode():
+    st.warning(
+        "**Mode Streamlit Cloud détecté.** Les modifications effectuées ici ne seront pas "
+        "sauvegardées — les credentials sont gérés via les Secrets Streamlit Cloud. "
+        "Pour ajouter ou modifier un utilisateur, mettez à jour le TOML dans "
+        "**⋮ → Settings → Secrets** sur le tableau de bord Streamlit Cloud.\n\n"
+        "**Streamlit Cloud mode detected.** Changes made here will not be saved — "
+        "credentials are managed via Streamlit Cloud Secrets. To add or change a user, "
+        "update the TOML in **⋮ → Settings → Secrets** on the Streamlit Cloud dashboard.",
+        icon="☁️",
+    )
+
 st.divider()
 
 # ── Current users ──────────────────────────────────────────────────────────────
@@ -46,9 +59,12 @@ if users:
                         type="secondary",
                         use_container_width=True,
                     ):
-                        remove_user(u["username"])
-                        st.success(f"Utilisateur **{u['username']}** supprimé.")
-                        st.rerun()
+                        ok, err = remove_user(u["username"])
+                        if ok:
+                            st.success(f"Utilisateur **{u['username']}** supprimé.")
+                            st.rerun()
+                        else:
+                            st.error(err)
                 else:
                     st.caption("*(compte actif)*")
 else:
@@ -93,9 +109,12 @@ if submitted:
         for e in errors:
             st.error(e)
     else:
-        add_user(new_username.strip(), new_name.strip(), new_email.strip(), new_password, new_role)
-        st.success(f"✓ Utilisateur **{new_username}** créé avec le rôle **{new_role}**.")
-        st.rerun()
+        ok, err = add_user(new_username.strip(), new_name.strip(), new_email.strip(), new_password, new_role)
+        if ok:
+            st.success(f"✓ Utilisateur **{new_username}** créé avec le rôle **{new_role}**.")
+            st.rerun()
+        else:
+            st.error(err)
 
 st.divider()
 
@@ -114,5 +133,8 @@ if pw_submitted:
     elif new_pw != new_pw2:
         st.error("Les mots de passe ne correspondent pas.")
     else:
-        change_password(target_user, new_pw)
-        st.success(f"✓ Mot de passe de **{target_user}** réinitialisé.")
+        ok, err = change_password(target_user, new_pw)
+        if ok:
+            st.success(f"✓ Mot de passe de **{target_user}** réinitialisé.")
+        else:
+            st.error(err)

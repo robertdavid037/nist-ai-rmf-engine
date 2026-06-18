@@ -101,6 +101,15 @@ else:
 # ── Cards ─────────────────────────────────────────────────────────────────────
 if not tools:
     st.info(t("no_assessments"))
+    if username != "demo":
+        st.caption(
+            "💡 Tip: Log in as **demo** to explore sample data, "
+            "or click **＋ New Assessment** above to assess your first AI tool."
+            if st.session_state.get("lang", "fr") == "en"
+            else
+            "💡 Astuce : Connectez-vous en tant que **demo** pour explorer les données exemple, "
+            "ou cliquez sur **＋ Nouvelle évaluation** pour évaluer votre premier outil IA."
+        )
 else:
     st.caption(f"{len(tools)} {t('tools_assessed')}")
     cols = st.columns(3)

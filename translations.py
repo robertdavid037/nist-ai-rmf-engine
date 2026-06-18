@@ -37,7 +37,7 @@ TRANSLATIONS = {
 
         # Assessment form
         "assessment_title":     "📋 Nouvelle évaluation d'outil IA",
-        "assessment_caption":   "Répondez aux 18 questions pour générer un rapport complet de conformité NIST AI RMF.",
+        "assessment_caption":   "Répondez aux 26 questions pour générer un rapport complet de conformité NIST AI RMF + Loi 25.",
         "btn_back_dashboard":   "← Retour au tableau de bord",
         "tool_being_assessed":  "Outil IA évalué",
         "assessor_name":        "Votre nom (évaluateur)",
@@ -176,7 +176,7 @@ TRANSLATIONS = {
 
         # Assessment form
         "assessment_title":     "📋 New AI Tool Assessment",
-        "assessment_caption":   "Answer all 18 questions to generate a full NIST AI RMF compliance report.",
+        "assessment_caption":   "Answer all 26 questions to generate a full NIST AI RMF + Law 25 compliance report.",
         "btn_back_dashboard":   "← Back to Dashboard",
         "tool_being_assessed":  "AI Tool Being Assessed",
         "assessor_name":        "Your Name (Assessor)",

@@ -25,11 +25,15 @@ CREDS_PATH: str = os.environ.get(
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
 def _secrets_available() -> bool:
-    """True when Streamlit Cloud secrets contain our credentials block."""
     try:
         return "credentials" in st.secrets and "cookie" in st.secrets
     except Exception:
         return False
+
+
+def is_cloud_mode() -> bool:
+    """True when running on Streamlit Cloud (secrets only, no local YAML file)."""
+    return _secrets_available() and not os.path.exists(CREDS_PATH)
 
 
 def _config_available() -> bool:
@@ -57,9 +61,12 @@ def _load_config() -> dict:
 
 
 def _save_config(config: dict) -> None:
-    """Write to local YAML file with 600 permissions. No-op on cloud-only mode."""
-    if _secrets_available() and not os.path.exists(CREDS_PATH):
-        return  # running cloud-only; changes require updating Streamlit secrets
+    """Write to local YAML with 600 permissions. Raises on cloud-only mode."""
+    if is_cloud_mode():
+        raise RuntimeError(
+            "Running in Streamlit Cloud secrets-only mode. "
+            "Update credentials via the Streamlit Cloud Secrets dashboard."
+        )
     creds_dir = os.path.dirname(CREDS_PATH)
     if creds_dir:
         os.makedirs(creds_dir, mode=0o700, exist_ok=True)
@@ -118,31 +125,45 @@ def is_admin() -> bool:
     return user.get("role", "user") == "admin"
 
 
-def add_user(username: str, name: str, email: str, password: str, role: str = "user") -> None:
-    """Hash the password with bcrypt-12 and persist the new user to credentials.yaml."""
-    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
-    config = _load_config()
-    config["credentials"]["usernames"][username] = {
-        "name":     name,
-        "email":    email,
-        "password": hashed,
-        "role":     role,
-    }
-    _save_config(config)
-
-
-def remove_user(username: str) -> None:
-    config = _load_config()
-    config["credentials"]["usernames"].pop(username, None)
-    _save_config(config)
-
-
-def change_password(username: str, new_password: str) -> None:
-    hashed = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
-    config = _load_config()
-    if username in config["credentials"]["usernames"]:
-        config["credentials"]["usernames"][username]["password"] = hashed
+def add_user(username: str, name: str, email: str, password: str, role: str = "user") -> tuple[bool, str]:
+    """Hash password with bcrypt-12 and persist. Returns (success, error_message)."""
+    try:
+        hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
+        config = _load_config()
+        config["credentials"]["usernames"][username] = {
+            "name":     name,
+            "email":    email,
+            "password": hashed,
+            "role":     role,
+        }
         _save_config(config)
+        return True, ""
+    except RuntimeError as e:
+        return False, str(e)
+
+
+def remove_user(username: str) -> tuple[bool, str]:
+    """Returns (success, error_message)."""
+    try:
+        config = _load_config()
+        config["credentials"]["usernames"].pop(username, None)
+        _save_config(config)
+        return True, ""
+    except RuntimeError as e:
+        return False, str(e)
+
+
+def change_password(username: str, new_password: str) -> tuple[bool, str]:
+    """Returns (success, error_message)."""
+    try:
+        hashed = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
+        config = _load_config()
+        if username in config["credentials"]["usernames"]:
+            config["credentials"]["usernames"][username]["password"] = hashed
+            _save_config(config)
+        return True, ""
+    except RuntimeError as e:
+        return False, str(e)
 
 
 def list_users() -> list[dict]:
@@ -184,11 +205,6 @@ def _render_first_run_setup() -> None:
             "</div>",
             unsafe_allow_html=True,
         )
-
-        # Detect cloud vs local
-        on_cloud = not os.path.exists(os.path.dirname(CREDS_PATH) or ".") or \
-                   os.environ.get("STREAMLIT_SHARING_MODE") or \
-                   os.environ.get("IS_STREAMLIT_CLOUD")
 
         st.info(
             "No accounts configured yet. Fill in the form to create your admin account.",
@@ -287,15 +303,42 @@ def _render_first_run_setup() -> None:
 # ── Login page UI ─────────────────────────────────────────────────────────────
 
 def _render_login_page(auth: stauth.Authenticate) -> None:
+    import time
+
     st.markdown(
-        """
-        <style>
-        [data-testid="stSidebarNav"] { display: none; }
-        </style>
-        """,
+        "<style>[data-testid='stSidebarNav']{display:none}</style>",
         unsafe_allow_html=True,
     )
 
+    # ── Brute-force throttle ──────────────────────────────────────────────────
+    _MAX_ATTEMPTS  = 5
+    _LOCKOUT_SECS  = 30
+    attempts  = st.session_state.setdefault("_login_attempts", 0)
+    locked_at = st.session_state.get("_login_locked_at")
+
+    if locked_at:
+        elapsed = time.time() - locked_at
+        if elapsed < _LOCKOUT_SECS:
+            remaining = int(_LOCKOUT_SECS - elapsed)
+            _, col, _ = st.columns([1, 2, 1])
+            with col:
+                st.markdown(
+                    "<div style='text-align:center; padding:40px 0 24px'>"
+                    "<div style='font-size:48px'>🛡️</div>"
+                    "<h2 style='margin:8px 0 4px'>NIST AI RMF</h2>"
+                    "</div>",
+                    unsafe_allow_html=True,
+                )
+                st.error(
+                    f"Too many failed attempts. Try again in {remaining} seconds. · "
+                    f"Trop de tentatives. Réessayez dans {remaining} secondes."
+                )
+            return
+        else:
+            st.session_state["_login_attempts"] = 0
+            st.session_state["_login_locked_at"] = None
+
+    # ── Login form ────────────────────────────────────────────────────────────
     _, col, _ = st.columns([1, 2, 1])
     with col:
         st.markdown(
@@ -310,4 +353,16 @@ def _render_login_page(auth: stauth.Authenticate) -> None:
 
         status = st.session_state.get("authentication_status")
         if status is False:
-            st.error("Identifiant ou mot de passe incorrect. · Incorrect username or password.")
+            st.session_state["_login_attempts"] = attempts + 1
+            if st.session_state["_login_attempts"] >= _MAX_ATTEMPTS:
+                st.session_state["_login_locked_at"] = time.time()
+                st.error(
+                    f"Too many failed attempts. Login disabled for {_LOCKOUT_SECS} seconds. · "
+                    f"Trop de tentatives. Connexion désactivée pendant {_LOCKOUT_SECS} secondes."
+                )
+            else:
+                remaining_attempts = _MAX_ATTEMPTS - st.session_state["_login_attempts"]
+                st.error(
+                    f"Incorrect username or password. {remaining_attempts} attempt(s) remaining. · "
+                    f"Identifiant ou mot de passe incorrect. {remaining_attempts} tentative(s) restante(s)."
+                )
