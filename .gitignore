@@ -7,6 +7,9 @@ database/assessments.db
 .DS_Store
 .claude/
 
+# Generated review bundle
+review_bundle.txt
+
 # Credentials — NEVER commit
 credentials.yaml
 credentials.yml
